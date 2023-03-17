@@ -1,4 +1,3 @@
-const db = require('@/config/db.js');
 const User = require("../../../models/user");
 
 export default async function handler(req, res) {
