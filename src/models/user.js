@@ -19,17 +19,19 @@ class User {
    * Throws UnauthorizedError is user not found or wrong password.
    **/
 
-  static async authenticate(username, password) {
+  static async authenticate({ email, password }) {
     // try to find the user first
     const result = await db.query(
-      `SELECT username,
-                  password,
-                  first_name AS "firstName",
-                  last_name AS "lastName",
-                  email,
-           FROM users
-           WHERE username = $1`,
-      [username]
+      `
+      SELECT     
+        password,
+        first_name AS "firstName",
+        last_name AS "lastName",
+        email,
+        date_joined AS "dateJoined"
+      FROM users
+      WHERE email = $1`,
+      [email]
     );
 
     const user = result.rows[0];
@@ -43,7 +45,7 @@ class User {
       }
     }
 
-    throw new UnauthorizedError("Invalid username/password");
+
   }
 
   /** Register user with data.
