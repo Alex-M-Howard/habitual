@@ -1,13 +1,10 @@
 "use strict";
 
 const {db, BCRYPT_WORK_FACTOR} = require("../config/db");
-const bcrypt = require("bcrypt");
 const { sqlForPartialUpdate } = require("../helpers/sql");
-const {
-  NotFoundError,
-  BadRequestError,
-  UnauthorizedError,
-} = require("../helpers/apiError");
+const { NotFoundError, BadRequestError, UnauthorizedError } = require("../helpers/apiError");
+const bcrypt = require("bcrypt");
+const date = require('date-and-time');
 
 /** Related functions for users. */
 
@@ -45,47 +42,48 @@ class User {
       }
     }
 
-
+    throw new UnauthorizedError("Invalid email/password");
   }
 
   /** Register user with data.
    *
-   * Returns { username, firstName, lastName, email, isAdmin }
+   * Returns { firstName, lastName, email, dateJoined }
    *
    * Throws BadRequestError on duplicates.
    **/
 
   static async register({
-    username,
     password,
     firstName,
     lastName,
-    email,
+    email
   }) {
     const duplicateCheck = await db.query(
-      `SELECT username
+      `SELECT email
            FROM users
-           WHERE username = $1`,
-      [username]
+           WHERE email = $1`,
+      [email]
     );
 
     if (duplicateCheck.rows[0]) {
-      throw new BadRequestError(`Duplicate username: ${username}`);
+      throw new BadRequestError(`Duplicate email: ${email}`);
     }
 
     const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
+    const now = new Date();
+    const joined = date.format(now, 'MM/DD/YYYY');
 
     const result = await db.query(
       `INSERT INTO users
-           (username,
-            password,
+           (password,
             first_name,
             last_name,
             email,
+            date_joined
            )
            VALUES ($1, $2, $3, $4, $5)
-           RETURNING username, first_name AS "firstName", last_name AS "lastName", email, is_admin AS "isAdmin"`,
-      [username, hashedPassword, firstName, lastName, email]
+           RETURNING first_name AS "firstName", last_name AS "lastName", email, date_joined AS "dateJoined"`,
+      [hashedPassword, firstName, lastName, email, joined]
     );
 
     const user = result.rows[0];
