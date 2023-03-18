@@ -3,8 +3,7 @@
 /** Convenience middleware to handle common auth cases in routes. */
 
 const jwt = require("jsonwebtoken");
-const { SECRET_KEY } = require("../config/db");
-const { UnauthorizedError } = require("../expressError");
+const { UnauthorizedError } = require("../helpers/apiError");
 
 
 /** Middleware: Authenticate user.
@@ -15,17 +14,10 @@ const { UnauthorizedError } = require("../expressError");
  * It's not an error if no token was provided or if the token is not valid.
  */
 
-function authenticateJWT(req, res, next) {
-  try {
-    const authHeader = req.headers && req.headers.authorization;
-    if (authHeader) {
-      const token = authHeader.replace(/^[Bb]earer /, "").trim();
-      res.locals.user = jwt.verify(token, SECRET_KEY);
-    }
-    return next();
-  } catch (err) {
-    return next();
-  }
+function authenticateJWT(token) {
+  token = token.replace(/^[Bb]earer /, "").trim();
+  const user = jwt.verify(token, process.env.NEXTAUTH_SECRET);
+  return user;
 }
 
 /** Middleware to use when they must be logged in.
