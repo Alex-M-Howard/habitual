@@ -1,7 +1,7 @@
-const User = require("../../../models/user");
+const User = require("../../models/user");
 const jsonschema = require("jsonschema");
-const userNewSchema = require("../../../models/schemas/userNew.json");
-const { createToken } = require("../../../helpers/tokens");
+const userNewSchema = require("../../models/schemas/userNew.json");
+const { createToken } = require("../../helpers/tokens");
 
 export default async function handler(req, res) {
   switch (req.method) {
