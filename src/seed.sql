@@ -20,7 +20,7 @@ CREATE TABLE users (
   last_name VARCHAR(255),
   username VARCHAR(255),
   password VARCHAR(255),
-  date_joined VARCHAR(255),
+  date_joined DATE,
   email VARCHAR(255)
 );
 
