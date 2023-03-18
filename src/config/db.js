@@ -2,7 +2,7 @@
 
 const { Client } = require("pg");
 
-const SECRET_KEY = process.env.SECRET_KEY;
+const SECRET_KEY = process.env.NEXTAUTH_SECRET;
 const PGPASSWORD = process.env.PGPASSWORD;
 const PGUSER = process.env.PGUSER;
 const DBHOST = process.env.PGHOST;
