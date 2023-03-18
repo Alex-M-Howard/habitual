@@ -45,5 +45,6 @@ db.connect();
 
 module.exports = {
   db,
-  BCRYPT_WORK_FACTOR
+  BCRYPT_WORK_FACTOR,
+  SECRET_KEY
 };
