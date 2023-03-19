@@ -15,64 +15,61 @@ DROP TABLE IF EXISTS users;
 
 -- Create the tables
 CREATE TABLE users (
-  id SERIAL PRIMARY KEY,
-  first_name VARCHAR(255),
-  last_name VARCHAR(255),
-  username VARCHAR(255),
-  password VARCHAR(255),
-  date_joined DATE,
-  email VARCHAR(255)
+id SERIAL PRIMARY KEY,
+first_name VARCHAR(255),
+last_name VARCHAR(255),
+password VARCHAR(255),
+date_joined DATE,
+email VARCHAR(255)
 );
 
 CREATE TABLE habits (
-  id SERIAL PRIMARY KEY,
-  name VARCHAR(255),
-  do_not_delete BOOLEAN DEFAULT false
+id SERIAL PRIMARY KEY,
+name VARCHAR(255),
+do_not_delete BOOLEAN DEFAULT false
 );
 
 CREATE TABLE journals (
-  id SERIAL PRIMARY KEY,
-  user_id INTEGER REFERENCES users(id),
-  entry VARCHAR(255)
+id SERIAL PRIMARY KEY,
+user_id INTEGER REFERENCES users(id),
+entry VARCHAR(255)
 );
 
 CREATE TABLE categories (
-  id SERIAL PRIMARY KEY,
-  name VARCHAR(255)
-  do_not_delete BOOLEAN DEFAULT false
+id SERIAL PRIMARY KEY,
+name VARCHAR(255),
+do_not_delete BOOLEAN DEFAULT false
 );
 
 CREATE TABLE habit_categories (
-  habit_id INTEGER REFERENCES habits(id),
-  category_id INTEGER REFERENCES categories(id)
+habit_id INTEGER REFERENCES habits(id),
+category_id INTEGER REFERENCES categories(id),
+do_not_delete BOOLEAN DEFAULT false
 );
 
 CREATE TABLE user_habits (
-  user_id INTEGER REFERENCES users(id),
-  habit_id INTEGER REFERENCES habits(id),
-  frequency INTEGER
+user_id INTEGER REFERENCES users(id),
+habit_id INTEGER REFERENCES habits(id),
+frequency INTEGER
 );
 
 CREATE TABLE days (
-  id SERIAL PRIMARY KEY,
-  name VARCHAR(255)
+id SERIAL PRIMARY KEY,
+name VARCHAR(255)
 );
 
 INSERT INTO days (name) VALUES
-  ('Monday'),
-  ('Tuesday'),
-  ('Wednesday'),
-  ('Thursday'),
-  ('Friday'),
-  ('Saturday'),
-  ('Sunday');
+('Monday'),
+('Tuesday'),
+('Wednesday'),
+('Thursday'),
+('Friday'),
+('Saturday'),
+('Sunday');
 
-
-
--- SEED INTO HABITS and CATEGORIES
-
-INSERT INTO habits (name, do_not_delete) 
-VALUES 
+-- Add values
+INSERT INTO habits (name, do_not_delete)
+VALUES
 ('Drink 8 glasses of water', TRUE),
 ('Exercise for 30 minutes', TRUE),
 ('Eat a healthy breakfast', TRUE),
@@ -92,9 +89,12 @@ VALUES
 ('Learn a new skill or hobby', TRUE),
 ('Clean bathroom', TRUE),
 ('Have date night', TRUE),
-('Call a friend', TRUE);
+('Call a friend', TRUE),
+('Laundry', TRUE),
+('Study', TRUE),
+('Read news', TRUE);
 
-INSERT INTO categories(name)
+INSERT INTO categories (name, do_not_delete)
 VALUES
 ('Morning', TRUE),
 ('Afternoon', TRUE),
@@ -105,3 +105,34 @@ VALUES
 ('Work', TRUE),
 ('Home', TRUE),
 ('Social', TRUE);
+
+INSERT INTO habit_categories (habit_id, category_id, do_not_delete)
+VALUES
+(1, 5, TRUE),
+(2, 5, TRUE),
+(3, 1, TRUE),
+(4, 4, TRUE),
+(5, 2, TRUE),
+(6, 4, TRUE),
+(7, 5, TRUE),
+(8, 4, TRUE),
+(9, 5, TRUE),
+(10, 3, TRUE),
+(11, 1, TRUE),
+(12, 7, TRUE),
+(13, 6, TRUE),
+(14, 9, TRUE),
+(15, 7, TRUE),
+(16, 4, TRUE),
+(17, 4, TRUE),
+(18, 8, TRUE),
+(19, 9, TRUE),
+(20, 9, TRUE),
+(21, 8, TRUE),
+(22, 6, TRUE),
+(23, 2, TRUE);
+
+INSERT INTO users (first_name, last_name, password, date_joined, email)
+VALUES
+('Alex', 'Howard', '$2b$13$/WEgEKl/JWJ98p3KjYDT7e.1hZ20hLfKXyGOgF3ljp7XqHdlQJZ5q', '2023-03-15', 'alexamh@zoho.com'),
+('Guest', 'User', '$2b$13$QHWMmC5g.II5ehmZ1sGePugzDdg8pZUg9amwcXagLIyfhVD2lbeyi', '2023-03-15', 'guest@guest.com'); --Guest password is 'password'
