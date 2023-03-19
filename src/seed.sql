@@ -27,7 +27,7 @@ CREATE TABLE users (
 CREATE TABLE habits (
   id SERIAL PRIMARY KEY,
   name VARCHAR(255),
-  description VARCHAR(255)
+  do_not_delete BOOLEAN
 );
 
 CREATE TABLE journals (
@@ -65,3 +65,42 @@ INSERT INTO days (name) VALUES
   ('Friday'),
   ('Saturday'),
   ('Sunday');
+
+
+
+-- SEED INTO HABITS and CATEGORIES
+
+INSERT INTO habits (name, do_not_delete) 
+VALUES 
+('Drink 8 glasses of water', TRUE),
+('Exercise for 30 minutes', TRUE),
+('Eat a healthy breakfast', TRUE),
+('Meditate for 10 minutes', TRUE),
+('Read for 20 minutes', TRUE),
+('Write in a journal for 10 minutes', TRUE),
+('Take a walk for 20 minutes', TRUE),
+('Practice gratitude', TRUE),
+('Stretch for 10 minutes', TRUE),
+('Floss your teeth', TRUE),
+('Take a multivitamin', TRUE),
+('Track your daily expenses', TRUE),
+('Learn a new word', TRUE),
+('Do something kind', TRUE),
+('Avoid checking phone for 1 hour', TRUE),
+('Practice deep breathing', TRUE),
+('Learn a new skill or hobby', TRUE),
+('Clean bathroom', TRUE),
+('Have date night', TRUE),
+('Call a friend', TRUE);
+
+INSERT INTO categories(name)
+VALUES
+('Morning'),
+('Afternoon'),
+('Night'),
+('Self Care'),
+('Health'),
+('School'),
+('Work'),
+('Home'),
+('Social');
