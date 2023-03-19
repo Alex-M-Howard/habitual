@@ -2,7 +2,7 @@
 
 const { db } = require("@/config/db");
 
-/** Related functions for habits. */
+/** Related functions for categories. */
 
 class Categories {
   /** Find all categories.
