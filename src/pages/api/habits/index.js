@@ -1,9 +1,10 @@
 import Habits from "@/models/habits";
 const jsonschema = require("jsonschema");
 const habitNewSchema = require("../../../models/schemas/habitNew.json");
+const habitDeleteSchema = require("../../../models/schemas/habitDelete.json");
 
 export default async function handler(req, res) {
-  let response;
+  let response, validator;
   
   switch (req.method) {
     case "GET":
@@ -13,7 +14,7 @@ export default async function handler(req, res) {
     
     
     case "POST":
-      const validator = jsonschema.validate(req.body, habitNewSchema);
+      validator = jsonschema.validate(req.body, habitNewSchema);
 
       if (!validator.valid) {
         const errs = validator.errors.map((error) => error.stack);
@@ -26,14 +27,17 @@ export default async function handler(req, res) {
       return res.status(200).json(response);
 
     
-    
-    case "PUT":
-      return res.status(200).json({ message: "Update habit" });
-
-    
-    
+  
     case "DELETE":
-      return res.status(200).json({ message: "Delete habit" });
+      validator = jsonschema.validate(req.body, habitDeleteSchema);
+
+      if (!validator.valid) {
+        const errs = validator.errors.map((error) => error.stack);
+        return res.status(400).json({ errors: errs });
+      }
+
+      response = await Habits.remove(req.body);
+      return res.status(200).json(response);
 
     
     
