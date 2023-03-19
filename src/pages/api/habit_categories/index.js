@@ -23,6 +23,8 @@ export default async function handler(req, res) {
       response = await HabitCategories.findAll();
       return res.status(200).json(response);
 
+    
+    
     case "POST":
       validator = jsonschema.validate(req.body, habit_categoriesNewSchema);
 
@@ -36,6 +38,8 @@ export default async function handler(req, res) {
       if (response.error) return res.status(400).json(response);
       return res.status(200).json(response);
 
+    
+    
     case "DELETE":
       validator = jsonschema.validate(req.body, habit_categoriesDeleteSchema);
 
@@ -47,6 +51,8 @@ export default async function handler(req, res) {
       response = await HabitCategories.remove(req.body);
       return res.status(200).json(response);
 
+    
+    
     default:
       return res.status(405).json({ error: "Method not allowed" });
   }
