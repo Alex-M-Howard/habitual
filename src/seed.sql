@@ -27,7 +27,7 @@ CREATE TABLE users (
 CREATE TABLE habits (
   id SERIAL PRIMARY KEY,
   name VARCHAR(255),
-  do_not_delete BOOLEAN
+  do_not_delete BOOLEAN DEFAULT false
 );
 
 CREATE TABLE journals (
