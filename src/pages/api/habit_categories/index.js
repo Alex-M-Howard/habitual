@@ -1,8 +1,8 @@
 import { authenticateJWT, ensureLoggedIn } from "@/middleware/auth";
-import Categories from "@/models/categories";
+import HabitCategories from "@/models/habit_categories";
 const jsonschema = require("jsonschema");
-const categoriesNewSchema = require("@/models/schemas/categoriesNew.json");
-const categoriesDeleteSchema = require("@/models/schemas/categoriesDelete.json");
+const habit_categoriesNewSchema = require("@/models/schemas/habit_categoriesNew.json");
+const habit_categoriesDeleteSchema = require("@/models/schemas/habit_categoriesDelete.json");
 
 export default async function handler(req, res) {
   let token, user, response, validator;
@@ -20,20 +20,20 @@ export default async function handler(req, res) {
   // Request Method Switch
   switch (req.method) {
     case "GET":
-      response = await Categories.findAll();
+      response = await HabitCategories.findAll();
       return res.status(200).json(response);
 
     
     
     case "POST":
-      validator = jsonschema.validate(req.body, categoriesNewSchema);
+      validator = jsonschema.validate(req.body, habit_categoriesNewSchema);
 
       if (!validator.valid) {
         const errs = validator.errors.map((error) => error.stack);
         return res.status(400).json({ errors: errs });
       }
 
-      response = await Categories.add(req.body);
+      response = await HabitCategories.add(req.body);
 
       if (response.error) return res.status(400).json(response);
       return res.status(200).json(response);
@@ -41,16 +41,18 @@ export default async function handler(req, res) {
     
     
     case "DELETE":
-      validator = jsonschema.validate(req.body, categoriesDeleteSchema);
+      validator = jsonschema.validate(req.body, habit_categoriesDeleteSchema);
 
       if (!validator.valid) {
         const errs = validator.errors.map((error) => error.stack);
         return res.status(400).json({ errors: errs });
       }
 
-      response = await Categories.remove(req.body);
+      response = await HabitCategories.remove(req.body);
       return res.status(200).json(response);
 
+    
+    
     default:
       return res.status(405).json({ error: "Method not allowed" });
   }

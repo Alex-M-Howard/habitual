@@ -3,7 +3,6 @@
 /** Convenience middleware to handle common auth cases in routes. */
 
 const jwt = require("jsonwebtoken");
-const { UnauthorizedError } = require("../helpers/apiError");
 
 
 /** Middleware: Authenticate user.
@@ -25,31 +24,11 @@ function authenticateJWT(token) {
  * If not, raises Unauthorized.
  */
 
-function ensureLoggedIn(req, res, next) {
-  try {
-    if (!res.locals.user) throw new UnauthorizedError();
-    return next();
-  } catch (err) {
-    return next(err);
-  }
+function ensureLoggedIn(req) {
+  let token = req.rawHeaders[req.rawHeaders.indexOf('Authorization') + 1]
+  return token;
 }
 
-
-/** Middleware to use when they be logged in as an admin user.
- *
- *  If not, raises Unauthorized.
- */
-
-function ensureAdmin(req, res, next) {
-  try {
-    if (!res.locals.user || !res.locals.user.isAdmin) {
-      throw new UnauthorizedError();
-    }
-    return next();
-  } catch (err) {
-    return next(err);
-  }
-}
 
 /** Middleware to use when they must provide a valid token & be user matching
  *  username provided as route param.
@@ -57,22 +36,18 @@ function ensureAdmin(req, res, next) {
  *  If not, raises Unauthorized.
  */
 
-function ensureCorrectUserOrAdmin(req, res, next) {
-  try {
-    const user = res.locals.user;
-    if (!(user && (user.isAdmin || user.username === req.params.username))) {
-      throw new UnauthorizedError();
-    }
-    return next();
-  } catch (err) {
-    return next(err);
+function ensureCorrectUser(user, req) {
+  const username = req.query.username;
+  if (username !== user.email.slice(0, user.email.indexOf('@'))) {
+    return false;
   }
+
+  return username;
 }
 
 
 module.exports = {
   authenticateJWT,
   ensureLoggedIn,
-  ensureAdmin,
-  ensureCorrectUserOrAdmin,
+  ensureCorrectUser,
 };

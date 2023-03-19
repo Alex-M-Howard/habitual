@@ -118,22 +118,25 @@ class User {
    * Throws NotFoundError if user not found.
    **/
 
-  static async get(username) {
+  static async get(email) {
     const userRes = await db.query(
-      `SELECT username,
+      `SELECT email,
         first_name AS "firstName",
         last_name AS "lastName",
-        email
+        email,
+        date_joined AS "dateJoined"
       FROM users
-      WHERE username = $1`,
-      [username]
+      WHERE email = $1`,
+      [email]
     );
 
     const user = userRes.rows[0];
 
-    if (!user) throw new NotFoundError(`No user: ${username}`);
+    if (!user) {
+      return { error: `${email} not found.` };
+    }
 
-    return user;
+    return {user};
   }
 
   /** Update user data with `data`.
@@ -142,18 +145,13 @@ class User {
    * all the fields; this only changes provided ones.
    *
    * Data can include:
-   *   { firstName, lastName, password, email, isAdmin }
+   *   { firstName, lastName, password, email }
    *
-   * Returns { username, firstName, lastName, email, isAdmin }
+   * Returns { username, firstName, lastName, email }
    *
-   * Throws NotFoundError if not found.
-   *
-   * WARNING: this function can set a new password or make a user an admin.
-   * Callers of this function must be certain they have validated inputs to this
-   * or a serious security risks are opened.
    */
 
-  static async update(username, data) {
+  static async update(email, data) {
     if (data.password) {
       data.password = await bcrypt.hash(data.password, BCRYPT_WORK_FACTOR);
     }
@@ -161,39 +159,69 @@ class User {
     const { setCols, values } = sqlForPartialUpdate(data, {
       firstName: "first_name",
       lastName: "last_name",
+      email: "email"
     });
-    const usernameVarIdx = "$" + (values.length + 1);
+    const emailVarIdx = "$" + (values.length + 1);
 
     const querySql = `UPDATE users 
                       SET ${setCols} 
-                      WHERE username = ${usernameVarIdx} 
-                      RETURNING username,
+                      WHERE email = ${emailVarIdx} 
+                      RETURNING email,
                                 first_name AS "firstName",
                                 last_name AS "lastName",
-                                email`;
-    const result = await db.query(querySql, [...values, username]);
+                                date_joined AS "dateJoined"`;
+    const result = await db.query(querySql, [...values, email]);
     const user = result.rows[0];
 
-    if (!user) throw new NotFoundError(`No user: ${username}`);
+    if (!user) {
+      return { error: `${email} not found. Update unsuccessful` };
+    }
 
     delete user.password;
-    return user;
+    return { user }
   }
 
-  /** Delete given user from database; returns undefined. */
+  /** Delete given user from database */
 
-  static async remove(username) {
+  static async remove(email) {
     let result = await db.query(
       `DELETE
            FROM users
-           WHERE username = $1
-           RETURNING username`,
-      [username]
+           WHERE email = $1
+           RETURNING email`,
+      [email]
     );
     const user = result.rows[0];
 
-    if (!user) throw new NotFoundError(`No user: ${username}`);
+    if (!user) {
+      return {error: `${email} not found. Delete unsuccessful`}
+    }
+
+    return { response: `User ${email} successfully deleted.` };
   }
-}
+
+
+  /**
+   * Get user habits
+   * 
+   */
+
+  /**
+   * Create new user habit
+   * 
+   */
+
+  /**
+   * Log user habit
+   * 
+   */
+
+  /**
+   * Delete user habit
+   * 
+   */
+
   
+
+}
 module.exports = User;
