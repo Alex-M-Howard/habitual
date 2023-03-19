@@ -12,6 +12,7 @@ DROP TABLE IF EXISTS journals;
 DROP TABLE IF EXISTS habits;
 DROP TABLE IF EXISTS days;
 DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS tracker;
 
 -- Create the tables
 CREATE TABLE users (
@@ -50,7 +51,9 @@ do_not_delete BOOLEAN DEFAULT false
 CREATE TABLE user_habits (
 user_id INTEGER REFERENCES users(id),
 habit_id INTEGER REFERENCES habits(id),
-frequency INTEGER
+frequency INTEGER,
+streak INTEGER DEFAULT 0,
+longest_streak INTEGER DEFAULT 0
 );
 
 CREATE TABLE days (
@@ -58,6 +61,16 @@ id SERIAL PRIMARY KEY,
 name VARCHAR(255)
 );
 
+CREATE TABLE tracker (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id),
+  habit_id INTEGER REFERENCES habits(id),
+  day_date DATE,
+  complete BOOLEAN DEFAULT false
+)
+
+
+-- Add values
 INSERT INTO days (name) VALUES
 ('Monday'),
 ('Tuesday'),
@@ -67,7 +80,7 @@ INSERT INTO days (name) VALUES
 ('Saturday'),
 ('Sunday');
 
--- Add values
+
 INSERT INTO habits (name, do_not_delete)
 VALUES
 ('Drink 8 glasses of water', TRUE),
