@@ -1,8 +1,8 @@
 import {authenticateJWT, ensureLoggedIn} from "@/middleware/auth";
 import Habits from "@/models/habits";
 const jsonschema = require("jsonschema");
-const habitNewSchema = require("../../../models/schemas/habitNew.json");
-const habitDeleteSchema = require("../../../models/schemas/habitDelete.json");
+const habitNewSchema = require("@/models/schemas/habitNew.json");
+const habitDeleteSchema = require("@/models/schemas/habitDelete.json");
 
 export default async function handler(req, res) {
   let token, user, response, validator;

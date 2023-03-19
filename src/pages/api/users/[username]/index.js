@@ -1,7 +1,7 @@
 import { authenticateJWT, ensureLoggedIn, ensureCorrectUser } from "@/middleware/auth";
 import User from "@/models/user";
 const jsonschema = require("jsonschema");
-const userUpdateSchema = require("../../../../models/schemas/userUpdate.json");
+const userUpdateSchema = require("@/models/schemas/userUpdate.json");
 
 
 export default async (req, res) => {
