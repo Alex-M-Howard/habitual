@@ -39,6 +39,7 @@ CREATE TABLE journals (
 CREATE TABLE categories (
   id SERIAL PRIMARY KEY,
   name VARCHAR(255)
+  do_not_delete BOOLEAN DEFAULT false
 );
 
 CREATE TABLE habit_categories (
@@ -95,12 +96,12 @@ VALUES
 
 INSERT INTO categories(name)
 VALUES
-('Morning'),
-('Afternoon'),
-('Night'),
-('Self Care'),
-('Health'),
-('School'),
-('Work'),
-('Home'),
-('Social');
+('Morning', TRUE),
+('Afternoon', TRUE),
+('Night', TRUE),
+('Self Care', TRUE),
+('Health', TRUE),
+('School', TRUE),
+('Work', TRUE),
+('Home', TRUE),
+('Social', TRUE);
