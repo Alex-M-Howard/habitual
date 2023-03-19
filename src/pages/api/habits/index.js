@@ -1,11 +1,11 @@
-import {authenticateJWT, ensureLoggedIn, ensureCorrectUser,} from "@/middleware/auth";
+import {authenticateJWT, ensureLoggedIn} from "@/middleware/auth";
 import Habits from "@/models/habits";
 const jsonschema = require("jsonschema");
 const habitNewSchema = require("../../../models/schemas/habitNew.json");
 const habitDeleteSchema = require("../../../models/schemas/habitDelete.json");
 
 export default async function handler(req, res) {
-  let token, user, username, response, validator;
+  let token, user, response, validator;
 
   // Middleware Checks
   try {
@@ -24,6 +24,8 @@ export default async function handler(req, res) {
       response = await Habits.findAll();
       return res.status(200).json(response);
 
+    
+    
     case "POST":
       validator = jsonschema.validate(req.body, habitNewSchema);
 
@@ -37,6 +39,8 @@ export default async function handler(req, res) {
       if (response.error) return res.status(400).json(response);
       return res.status(200).json(response);
 
+    
+    
     case "DELETE":
       validator = jsonschema.validate(req.body, habitDeleteSchema);
 
