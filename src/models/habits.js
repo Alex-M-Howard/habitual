@@ -65,7 +65,7 @@ class Habits {
        FROM habits WHERE id = $1`,
       [id]
     );
-      console.log(existingHabit)
+
     if (existingHabit.rows.length < 1) {
       return { error: "Habit not found. No operation completed." };
     }
