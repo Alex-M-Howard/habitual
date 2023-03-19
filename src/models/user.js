@@ -149,11 +149,6 @@ class User {
    *
    * Returns { username, firstName, lastName, email }
    *
-   * Throws NotFoundError if not found.
-   *
-   * WARNING: this function can set a new password or make a user an admin.
-   * Callers of this function must be certain they have validated inputs to this
-   * or a serious security risks are opened.
    */
 
   static async update(email, data) {
@@ -186,7 +181,7 @@ class User {
     return { user }
   }
 
-  /** Delete given user from database; returns undefined. */
+  /** Delete given user from database */
 
   static async remove(email) {
     let result = await db.query(
@@ -204,5 +199,29 @@ class User {
 
     return { response: `User ${email} successfully deleted.` };
   }
+
+
+  /**
+   * Get user habits
+   * 
+   */
+
+  /**
+   * Create new user habit
+   * 
+   */
+
+  /**
+   * Log user habit
+   * 
+   */
+
+  /**
+   * Delete user habit
+   * 
+   */
+
+  
+
 }
 module.exports = User;
