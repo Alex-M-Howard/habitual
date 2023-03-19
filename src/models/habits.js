@@ -70,7 +70,7 @@ class Habits {
       return { error: "Habit not found. No operation completed." };
     }
 
-    if (existingHabit.doNotDelete) {
+    if (existingHabit.rows[0].doNotDelete) {
       return { error: "Habit has permanent status. No operation completed." };
     }
 
