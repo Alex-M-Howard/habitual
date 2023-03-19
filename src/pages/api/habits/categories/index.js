@@ -1,16 +1,55 @@
+import { authenticateJWT, ensureLoggedIn } from "@/middleware/auth";
+import Categories from "@/models/categories";
+const jsonschema = require("jsonschema");
+const categoriesNewSchema = require("@/models/schemas/categoriesNew.json");
+const categoriesDeleteSchema = require("@/models/schemas/categoriesDelete.json");
+
 export default async function handler(req, res) {
+  let token, user, response, validator;
+
+  // Middleware Checks
+  try {
+    token = ensureLoggedIn(req);
+    user = authenticateJWT(token);
+
+    if (!user) throw new Error();
+  } catch (error) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  // Request Method Switch
   switch (req.method) {
     case "GET":
-      return res.status(200).json({ message: "Get categories" });
+      response = await Categories.findAll();
+      return res.status(200).json(response);
 
+    
+    
     case "POST":
-      return res.status(200).json({ message: "Add category" });
+      validator = jsonschema.validate(req.body, categoriesNewSchema);
 
-    case "PUT":
-      return res.status(200).json({ message: "Update category" });
+      if (!validator.valid) {
+        const errs = validator.errors.map((error) => error.stack);
+        return res.status(400).json({ errors: errs });
+      }
 
+      response = await Categories.add(req.body);
+
+      if (response.error) return res.status(400).json(response);
+      return res.status(200).json(response);
+
+    
+    
     case "DELETE":
-      return res.status(200).json({ message: "Delete category" });
+      validator = jsonschema.validate(req.body, categoriesDeleteSchema);
+
+      if (!validator.valid) {
+        const errs = validator.errors.map((error) => error.stack);
+        return res.status(400).json({ errors: errs });
+      }
+
+      response = await Categories.remove(req.body);
+      return res.status(200).json(response);
 
     default:
       return res.status(405).json({ error: "Method not allowed" });
