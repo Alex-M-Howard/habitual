@@ -66,12 +66,14 @@ CREATE TABLE tracker (
   user_id INTEGER REFERENCES users(id),
   habit_id INTEGER REFERENCES habits(id),
   day_date DATE,
+  day_id INTEGER REFERENCES days(id),
   complete BOOLEAN DEFAULT false
-)
+);
 
 
 -- Add values
-INSERT INTO days (name) VALUES
+INSERT INTO days (name) 
+VALUES
 ('Monday'),
 ('Tuesday'),
 ('Wednesday'),
