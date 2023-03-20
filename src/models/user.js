@@ -205,6 +205,26 @@ class User {
    * Get user habits
    * 
    */
+  static async getUserHabits(id) {
+    console.log(id)
+    const userHabits = await db.query(
+      `SELECT 
+      habits.name AS "habitName",
+      frequency,
+      streak,
+      longest_streak AS "longestStreak"
+      FROM user_habits
+      JOIN habits ON habits.id=habit_id
+      WHERE user_id=$1
+      `,
+      [id]
+    );
+
+    let habits = userHabits.rows
+
+    return {habits};
+  }
+
 
   /**
    * Create new user habit
