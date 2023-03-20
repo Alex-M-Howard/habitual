@@ -52,12 +52,7 @@ class User {
    * Throws BadRequestError on duplicates.
    **/
 
-  static async register({
-    password,
-    firstName,
-    lastName,
-    email
-  }) {
+  static async register({ password, firstName, lastName, email }) {
     const duplicateCheck = await db.query(
       `SELECT email
            FROM users
@@ -71,7 +66,7 @@ class User {
 
     const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
     const now = new Date();
-    const joined = date.format(now, 'MM/DD/YYYY');
+    const joined = date.format(now, "MM/DD/YYYY");
 
     const result = await db.query(
       `INSERT INTO users
@@ -112,31 +107,36 @@ class User {
 
   /** Given a username, return data about user.
    *
-   * Returns { username, first_name, last_name, is_admin, jobs }
-   *   where jobs is { id, title, company_handle, company_name, state }
+   * Returns { email, firstName, lastName, dateJoined, habits: [habit]
+   *
    *
    * Throws NotFoundError if user not found.
    **/
 
   static async get(email) {
     const userRes = await db.query(
-      `SELECT email,
+      `SELECT 
+        id,
+        email,
         first_name AS "firstName",
         last_name AS "lastName",
         email,
         date_joined AS "dateJoined"
       FROM users
-      WHERE email = $1`,
+      WHERE email = $1
+      `,
       [email]
     );
 
     const user = userRes.rows[0];
 
-    if (!user) {
-      return { error: `${email} not found.` };
-    }
+    if (!user) return { error: `${email} not found.` };
 
-    return {user};
+
+    let response = await User.getUserHabits(user.id);
+    user.habits = response.habits;
+
+    return { user };
   }
 
   /** Update user data with `data`.
@@ -159,7 +159,7 @@ class User {
     const { setCols, values } = sqlForPartialUpdate(data, {
       firstName: "first_name",
       lastName: "last_name",
-      email: "email"
+      email: "email",
     });
     const emailVarIdx = "$" + (values.length + 1);
 
@@ -178,7 +178,7 @@ class User {
     }
 
     delete user.password;
-    return { user }
+    return { user };
   }
 
   /** Delete given user from database */
@@ -194,19 +194,17 @@ class User {
     const user = result.rows[0];
 
     if (!user) {
-      return {error: `${email} not found. Delete unsuccessful`}
+      return { error: `${email} not found. Delete unsuccessful` };
     }
 
     return { response: `User ${email} successfully deleted.` };
   }
 
-
   /**
    * Get user habits
-   * 
+   * Returns array of habits
    */
   static async getUserHabits(id) {
-    console.log(id)
     const userHabits = await db.query(
       `SELECT 
       habits.name AS "habitName",
@@ -228,20 +226,34 @@ class User {
 
   /**
    * Create new user habit
-   * 
+   *
    */
+  static async addUserHabit({userId, habitId, frequency}) {
+    const userHabits = await db.query(
+      `INSERT INTO user_habits (user_id, habit_id, frequency)
+       VALUES
+       ($1, $2, $3)
+       RETURNING
+        user_id AS "userID",
+        habit_id AS "habitID",
+        frequency,
+        streak,
+        longest_streak AS "longestStreak"
+      `,
+      [userId, habitId, frequency]
+    );
+
+    return userHabits.rows;
+  }
 
   /**
    * Log user habit
-   * 
+   *
    */
 
   /**
    * Delete user habit
-   * 
+   *
    */
-
-  
-
 }
 module.exports = User;
