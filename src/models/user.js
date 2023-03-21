@@ -247,11 +247,16 @@ class User {
       `DELETE
            FROM user_habits
            WHERE user_id = $1 AND habit_id = $2
+           RETURNING user_id, habit_id
       `,
       [userId, habitId]
     );
 
-      // TODO Need error message for if habit didn't exist
+    if (result.rows.length < 1) {
+      return {
+        error: `User: ${userId} had no existing habit: ${habitId}. No operations performed.`,
+      };
+    }
 
     return { response: `User habit successfully deleted.` };
   }
