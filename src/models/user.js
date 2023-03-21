@@ -200,6 +200,19 @@ class User {
    * @returns {userId, habitId, frequency, streak, longestStreak}
    */
   static async addUserHabit({ userId, habitId, frequency }) {
+    const existanceCheck = await db.query(
+      `
+      SELECT * 
+      FROM user_habits
+      WHERE user_id = $1 AND habit_id = $2
+      `,
+      [userId, habitId]
+    )
+
+    if (existanceCheck.rows.length > 0) {
+      return { error: `User ${userId} already has habit ${habitId}. No operations performed.` };
+    }
+
     const userHabits = await db.query(
       `INSERT INTO user_habits (user_id, habit_id, frequency)
        VALUES
