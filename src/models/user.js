@@ -254,6 +254,22 @@ class User {
   /**
    * Delete user habit
    *
+   * @param {int} userId
+   * @param {int} habitId
+   * @returns {response: "UserHabit successfully deleted"}
    */
+  static async removeUserHabit({userId, habitId}) {
+    let result = await db.query(
+      `DELETE
+           FROM user_habits
+           WHERE user_id = $1 AND habit_id = $2
+      `,
+      [userId, habitId]
+    );
+
+      // TODO Need error message for if habit didn't exist
+
+    return { response: `User habit successfully deleted.` };
+  }
 }
 module.exports = User;
