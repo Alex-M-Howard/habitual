@@ -9,13 +9,11 @@ const date = require('date-and-time');
 /** Related functions for users. */
 
 class User {
-  /** authenticate user with username, password.
+  /**
    *
-   * Returns { username, first_name, last_name, email, is_admin }
-   *
-   * Throws UnauthorizedError is user not found or wrong password.
-   **/
-
+   * @param {OBJ{email:string, password:string}} {email, password}
+   * @returns {user: {firstName, lastName, email, date_joined}}
+   */
   static async authenticate({ email, password }) {
     // try to find the user first
     const result = await db.query(
@@ -45,13 +43,11 @@ class User {
     throw new UnauthorizedError("Invalid email/password");
   }
 
-  /** Register user with data.
+  /**
    *
-   * Returns { firstName, lastName, email, dateJoined }
-   *
-   * Throws BadRequestError on duplicates.
-   **/
-
+   * @param {{string, string, string, string}} {password, firstName, lastName, email}
+   * @returns {user:{firstName, lastName, email, dateJoined}}
+   */
   static async register({ password, firstName, lastName, email }) {
     const duplicateCheck = await db.query(
       `SELECT email
@@ -86,33 +82,11 @@ class User {
     return user;
   }
 
-  /** Find all users.
+  /**
    *
-   * Returns [{ username, first_name, last_name, email, is_admin }, ...]
-   **/
-
-  static async findAll() {
-    const result = await db.query(
-      `SELECT 
-        username,
-        first_name AS "firstName",
-        last_name AS "lastName",
-        email
-      FROM users
-      ORDER BY username`
-    );
-
-    return result.rows;
-  }
-
-  /** Given a username, return data about user.
-   *
-   * Returns { email, firstName, lastName, dateJoined, habits: [habit]
-   *
-   *
-   * Throws NotFoundError if user not found.
-   **/
-
+   * @param {string} email
+   * @returns {user: {id, firstName, lastName, email, dateJoined, habits: []}}
+   */
   static async get(email) {
     const userRes = await db.query(
       `SELECT 
@@ -132,25 +106,18 @@ class User {
 
     if (!user) return { error: `${email} not found.` };
 
-
     let response = await User.getUserHabits(user.id);
     user.habits = response.habits;
 
     return { user };
   }
 
-  /** Update user data with `data`.
+  /**
    *
-   * This is a "partial update" --- it's fine if data doesn't contain
-   * all the fields; this only changes provided ones.
-   *
-   * Data can include:
-   *   { firstName, lastName, password, email }
-   *
-   * Returns { username, firstName, lastName, email }
-   *
+   * @param {string} email
+   * @param {{OBJ}} data - Can contain various keys to change
+   * @returns  {user: {firstName, lastName, email, dateJoined}}
    */
-
   static async update(email, data) {
     if (data.password) {
       data.password = await bcrypt.hash(data.password, BCRYPT_WORK_FACTOR);
@@ -181,8 +148,11 @@ class User {
     return { user };
   }
 
-  /** Delete given user from database */
-
+  /**
+   *
+   * @param {string} email
+   * @returns {response: "User [id] successfully deleted"}
+   */
   static async remove(email) {
     let result = await db.query(
       `DELETE
@@ -201,8 +171,9 @@ class User {
   }
 
   /**
-   * Get user habits
-   * Returns array of habits
+   *
+   * @param {int} id
+   * @returns {habits: []}
    */
   static async getUserHabits(id) {
     const userHabits = await db.query(
@@ -218,17 +189,17 @@ class User {
       [id]
     );
 
-    let habits = userHabits.rows
+    let habits = userHabits.rows;
 
-    return {habits};
+    return { habits };
   }
 
-
   /**
-   * Create new user habit
    *
+   * @param {{int, int, int}} {userId, habitId, frequency}
+   * @returns {userId, habitId, frequency, streak, longestStreak}
    */
-  static async addUserHabit({userId, habitId, frequency}) {
+  static async addUserHabit({ userId, habitId, frequency }) {
     const userHabits = await db.query(
       `INSERT INTO user_habits (user_id, habit_id, frequency)
        VALUES
@@ -251,8 +222,8 @@ class User {
    *
    */
 
+
   /**
-   * Delete user habit
    *
    * @param {int} userId
    * @param {int} habitId
