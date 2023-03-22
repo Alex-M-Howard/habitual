@@ -9,13 +9,11 @@ const date = require('date-and-time');
 /** Related functions for users. */
 
 class User {
-  /** authenticate user with username, password.
+  /**
    *
-   * Returns { username, first_name, last_name, email, is_admin }
-   *
-   * Throws UnauthorizedError is user not found or wrong password.
-   **/
-
+   * @param {OBJ{email:string, password:string}} {email, password}
+   * @returns {user: {firstName, lastName, email, date_joined}}
+   */
   static async authenticate({ email, password }) {
     // try to find the user first
     const result = await db.query(
@@ -45,19 +43,12 @@ class User {
     throw new UnauthorizedError("Invalid email/password");
   }
 
-  /** Register user with data.
+  /**
    *
-   * Returns { firstName, lastName, email, dateJoined }
-   *
-   * Throws BadRequestError on duplicates.
-   **/
-
-  static async register({
-    password,
-    firstName,
-    lastName,
-    email
-  }) {
+   * @param {{string, string, string, string}} {password, firstName, lastName, email}
+   * @returns {user:{firstName, lastName, email, dateJoined}}
+   */
+  static async register({ password, firstName, lastName, email }) {
     const duplicateCheck = await db.query(
       `SELECT email
            FROM users
@@ -71,7 +62,7 @@ class User {
 
     const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
     const now = new Date();
-    const joined = date.format(now, 'MM/DD/YYYY');
+    const joined = date.format(now, "MM/DD/YYYY");
 
     const result = await db.query(
       `INSERT INTO users
@@ -91,66 +82,42 @@ class User {
     return user;
   }
 
-  /** Find all users.
+  /**
    *
-   * Returns [{ username, first_name, last_name, email, is_admin }, ...]
-   **/
-
-  static async findAll() {
-    const result = await db.query(
-      `SELECT 
-        username,
-        first_name AS "firstName",
-        last_name AS "lastName",
-        email
-      FROM users
-      ORDER BY username`
-    );
-
-    return result.rows;
-  }
-
-  /** Given a username, return data about user.
-   *
-   * Returns { username, first_name, last_name, is_admin, jobs }
-   *   where jobs is { id, title, company_handle, company_name, state }
-   *
-   * Throws NotFoundError if user not found.
-   **/
-
+   * @param {string} email
+   * @returns {user: {id, firstName, lastName, email, dateJoined, habits: []}}
+   */
   static async get(email) {
     const userRes = await db.query(
-      `SELECT email,
+      `SELECT 
+        id,
+        email,
         first_name AS "firstName",
         last_name AS "lastName",
         email,
         date_joined AS "dateJoined"
       FROM users
-      WHERE email = $1`,
+      WHERE email = $1
+      `,
       [email]
     );
 
     const user = userRes.rows[0];
 
-    if (!user) {
-      return { error: `${email} not found.` };
-    }
+    if (!user) return { error: `${email} not found.` };
 
-    return {user};
+    let response = await User.getUserHabits(user.id);
+    user.habits = response.habits;
+
+    return { user };
   }
 
-  /** Update user data with `data`.
+  /**
    *
-   * This is a "partial update" --- it's fine if data doesn't contain
-   * all the fields; this only changes provided ones.
-   *
-   * Data can include:
-   *   { firstName, lastName, password, email }
-   *
-   * Returns { username, firstName, lastName, email }
-   *
+   * @param {string} email
+   * @param {{OBJ}} data - Can contain various keys to change
+   * @returns  {user: {firstName, lastName, email, dateJoined}}
    */
-
   static async update(email, data) {
     if (data.password) {
       data.password = await bcrypt.hash(data.password, BCRYPT_WORK_FACTOR);
@@ -159,7 +126,7 @@ class User {
     const { setCols, values } = sqlForPartialUpdate(data, {
       firstName: "first_name",
       lastName: "last_name",
-      email: "email"
+      email: "email",
     });
     const emailVarIdx = "$" + (values.length + 1);
 
@@ -178,11 +145,14 @@ class User {
     }
 
     delete user.password;
-    return { user }
+    return { user };
   }
 
-  /** Delete given user from database */
-
+  /**
+   *
+   * @param {string} email
+   * @returns {response: "User [id] successfully deleted"}
+   */
   static async remove(email) {
     let result = await db.query(
       `DELETE
@@ -194,7 +164,7 @@ class User {
     const user = result.rows[0];
 
     if (!user) {
-      return {error: `${email} not found. Delete unsuccessful`}
+      return { error: `${email} not found. Delete unsuccessful` };
     }
 
     return { response: `User ${email} successfully deleted.` };
@@ -202,26 +172,179 @@ class User {
 
 
   /**
-   * Get user habits
-   * 
+   *
+   * @param {int} id
+   * @returns {habits: []}
    */
+  static async getUserHabits(id) {
+    const userHabits = await db.query(
+      `SELECT 
+      habits.name AS "habitName",
+      frequency,
+      streak,
+      longest_streak AS "longestStreak"
+      FROM user_habits
+      JOIN habits ON habits.id=habit_id
+      WHERE user_id=$1
+      `,
+      [id]
+    );
+
+    let habits = userHabits.rows;
+
+    return { habits };
+  }
+
 
   /**
-   * Create new user habit
-   * 
+   *
+   * @param {{int, int, int}} {userId, habitId, frequency}
+   * @returns {userId, habitId, frequency, streak, longestStreak}
    */
+  static async addUserHabit({ userId, habitId, frequency }) {
+    const existanceCheck = await db.query(
+      `
+      SELECT * 
+      FROM user_habits
+      WHERE user_id = $1 AND habit_id = $2
+      `,
+      [userId, habitId]
+    )
+
+    if (existanceCheck.rows.length > 0) {
+      return { error: `User ${userId} already has habit ${habitId}. No operations performed.` };
+    }
+
+    const userHabits = await db.query(
+      `INSERT INTO user_habits (user_id, habit_id, frequency)
+       VALUES
+       ($1, $2, $3)
+       RETURNING
+        user_id AS "userID",
+        habit_id AS "habitID",
+        frequency,
+        streak,
+        longest_streak AS "longestStreak"
+      `,
+      [userId, habitId, frequency]
+    );
+
+    return userHabits.rows;
+  }
+
+
+  /**
+   *  Get user habit log
+   */
+  static async getUserLog({ userId }) {
+
+    const existanceCheck = await db.query(
+      `
+      SELECT * FROM users WHERE id=$1`,[userId]
+    )
+
+    if (existanceCheck.rows.length < 1) {
+      return {error: `User: ${userId} not found.` };
+    }
+
+    const userLog = await db.query(
+      `
+      SELECT *
+      FROM tracker
+      WHERE user_id=$1`,
+      [userId]
+    );
+
+    return { log: userLog.rows };
+
+  }
+
 
   /**
    * Log user habit
-   * 
+   *
    */
+  static async logUserHabit({ userId, habitId, date = new Date()}) {
+    let response;
+
+    const existanceUserHabitCheck = await db.query(
+      `
+      SELECT *
+      FROM user_habits
+      WHERE user_id=$1 AND habit_id=$2
+      `,
+      [userId, habitId]
+    );
+
+    if (existanceUserHabitCheck.rows.length < 1) {
+      return { error: `User: ${userId} has no habit: ${habitId}. not found. No operation performed.` };
+    }
+
+    const existanceTrackerCheck = await db.query(
+      `
+      SELECT *
+      FROM tracker
+      WHERE user_id=$1 AND habit_id=$2 AND day_date=$3`,
+      [userId, habitId, date]
+    )
+
+    if (!(date instanceof Date)) {
+      date = new Date(date);
+    }
+
+    if (existanceTrackerCheck.rows.length > 0) {
+      response = await db.query(
+        `
+        UPDATE tracker
+        SET complete = true
+        WHERE user_id=$1 AND habit_id=$2 AND day_date=$3
+        RETURNING *`,
+        [userId, habitId, date]
+      );
+    } else { 
+      const dateOptions = { weekday: 'long' };
+      const dayName = date.toLocaleString('en-US', dateOptions);
+
+      let dayId = await db.query('SELECT id FROM days WHERE name = $1', [dayName]);
+      dayId = dayId.rows[0].id;
+
+      response = await db.query(
+        `
+        INSERT INTO tracker (user_id, habit_id, day_date, day_id, complete)
+        VALUES
+          ($1, $2, $3, $4, true)
+        RETURNING *`,
+        [userId, habitId, date, dayId]
+      );
+    }
+
+    return {response: response.rows}
+  }
+
 
   /**
-   * Delete user habit
-   * 
+   *
+   * @param {int} userId
+   * @param {int} habitId
+   * @returns {response: "UserHabit successfully deleted"}
    */
+  static async removeUserHabit({userId, habitId}) {
+    let result = await db.query(
+      `DELETE
+           FROM user_habits
+           WHERE user_id = $1 AND habit_id = $2
+           RETURNING user_id, habit_id
+      `,
+      [userId, habitId]
+    );
 
-  
+    if (result.rows.length < 1) {
+      return {
+        error: `User: ${userId} had no existing habit: ${habitId}. No operations performed.`,
+      };
+    }
 
+    return { response: `User habit successfully deleted.` };
+  }
 }
 module.exports = User;
