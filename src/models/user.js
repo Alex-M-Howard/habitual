@@ -170,6 +170,7 @@ class User {
     return { response: `User ${email} successfully deleted.` };
   }
 
+
   /**
    *
    * @param {int} id
@@ -193,6 +194,7 @@ class User {
 
     return { habits };
   }
+
 
   /**
    *
@@ -262,6 +264,62 @@ class User {
    * Log user habit
    *
    */
+  static async logUserHabit({ userId, habitId, date = new Date()}) {
+    let response;
+
+    const existanceUserHabitCheck = await db.query(
+      `
+      SELECT *
+      FROM user_habits
+      WHERE user_id=$1 AND habit_id=$2
+      `,
+      [userId, habitId]
+    );
+
+    if (existanceUserHabitCheck.rows.length < 1) {
+      return { error: `User: ${userId} has no habit: ${habitId}. not found. No operation performed.` };
+    }
+
+    const existanceTrackerCheck = await db.query(
+      `
+      SELECT *
+      FROM tracker
+      WHERE user_id=$1 AND habit_id=$2 AND day_date=$3`,
+      [userId, habitId, date]
+    )
+
+    if (!(date instanceof Date)) {
+      date = new Date(date);
+    }
+
+    if (existanceTrackerCheck.rows.length > 0) {
+      response = await db.query(
+        `
+        UPDATE tracker
+        SET complete = true
+        WHERE user_id=$1 AND habit_id=$2 AND day_date=$3
+        RETURNING *`,
+        [userId, habitId, date]
+      );
+    } else { 
+      const dateOptions = { weekday: 'long' };
+      const dayName = date.toLocaleString('en-US', dateOptions);
+
+      let dayId = await db.query('SELECT id FROM days WHERE name = $1', [dayName]);
+      dayId = dayId.rows[0].id;
+
+      response = await db.query(
+        `
+        INSERT INTO tracker (user_id, habit_id, day_date, day_id, complete)
+        VALUES
+          ($1, $2, $3, $4, true)
+        RETURNING *`,
+        [userId, habitId, date, dayId]
+      );
+    }
+
+    return {response: response.rows}
+  }
 
 
   /**
