@@ -33,6 +33,7 @@ do_not_delete BOOLEAN DEFAULT false
 CREATE TABLE journals (
 id SERIAL PRIMARY KEY,
 user_id INTEGER REFERENCES users(id),
+date DATE,
 entry VARCHAR(255)
 );
 
