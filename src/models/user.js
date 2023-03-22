@@ -230,6 +230,34 @@ class User {
     return userHabits.rows;
   }
 
+
+  /**
+   *  Get user habit log
+   */
+  static async getUserLog({ userId }) {
+
+    const existanceCheck = await db.query(
+      `
+      SELECT * FROM users WHERE id=$1`,[userId]
+    )
+
+    if (existanceCheck.rows.length < 1) {
+      return {error: `User: ${userId} not found.` };
+    }
+
+    const userLog = await db.query(
+      `
+      SELECT *
+      FROM tracker
+      WHERE user_id=$1`,
+      [userId]
+    );
+
+    return { log: userLog.rows };
+
+  }
+
+
   /**
    * Log user habit
    *
