@@ -6,7 +6,6 @@ export default function Home() {
   const user = useSelector(store => store.user);
   const theme = useSelector(store => store.theme);
 
-  console.log(user, theme)
   return (
     <>
       <Head>

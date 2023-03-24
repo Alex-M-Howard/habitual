@@ -2,9 +2,9 @@
 import { CacheProvider } from "@emotion/react";
 import createEmotionCache from "../config/createEmotionCache";
 import rootReducer from "@/redux/rootReducer.js";
-import { Provider } from "react-redux";
+import { Provider, useSelector } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
-import { useSelector } from "react-redux";
+
 
 
 //MaterialUI Imports
@@ -26,21 +26,24 @@ const clientSideEmotionCache = createEmotionCache();
    reducer: rootReducer,
  });
 
- const themeSelector = (state) => state.theme;
+function ThemeWrapper({children}) {
+  const theme = useSelector((state) => state.theme);
+  console.log(theme)
+  return <ThemeProvider theme={theme}>{children}</ThemeProvider>
+}
+
 
 export default function MyApp(props) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
   
-  const theme = useSelector(themeSelector());
-
   return (
     <CacheProvider value={emotionCache}>
       <Provider store={store}>
-        <ThemeProvider theme={theme}>
-          <CssBaseline enableColorScheme={true} />
+        <CssBaseline enableColorScheme={true} />
+        <ThemeWrapper>
           <NavBar />
           <Component {...pageProps} />
-        </ThemeProvider>
+        </ThemeWrapper>
       </Provider>
     </CacheProvider>
   );
