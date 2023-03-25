@@ -4,8 +4,7 @@ import createEmotionCache from "../config/createEmotionCache";
 import rootReducer from "@/redux/rootReducer.js";
 import { Provider, useSelector } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
-
-
+import { lightTheme, darkTheme } from "@/config/theme";
 
 //MaterialUI Imports
 import { ThemeProvider } from "@mui/material/styles";
@@ -27,8 +26,9 @@ const clientSideEmotionCache = createEmotionCache();
  });
 
 function ThemeWrapper({children}) {
-  const theme = useSelector((state) => state.theme);
-  console.log(theme)
+  const colorMode = useSelector(store => store.activeTheme.theme);
+  const theme = colorMode === 'light' ? lightTheme : darkTheme;
+
   return <ThemeProvider theme={theme}>{children}</ThemeProvider>
 }
 
