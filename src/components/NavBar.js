@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import uuid4 from "uuid4";
+import { lightTheme, darkTheme } from "@/config/theme";
 
 //MaterialUI Imports
 import { AppBar, Box, Divider, Drawer } from "@mui/material";
@@ -11,7 +12,6 @@ import { List, ListItem, ListItemButton, ListItemText } from "@mui/material";
 import { Toolbar, Typography, Button, IconButton } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
-import { useTheme } from "@mui/material/styles";
 
 
 
@@ -22,12 +22,12 @@ function NavBar(props) {
   
   let isLoggedIn = true;
   const router = useRouter();
-  const theme = useSelector(store => store.theme);
-
+  let colorMode = useSelector((store) => store.activeTheme.theme);
+  const theme = colorMode === "light" ? lightTheme : darkTheme;
   const dispatch = useDispatch();
 
   const toggleTheme = () => {
-    dispatch({ type: "CHANGE_THEME" });
+    dispatch({ type: "CHANGE_THEME", payload: colorMode === "light" ? "dark" : "light"  });
   };
 
   const drawerWidth = 240;
@@ -146,7 +146,7 @@ function NavBar(props) {
             ))}
             <Button key="theme-toggle" onClick={toggleTheme}>
               <Brightness4Icon
-                style={{ color: `${theme.palette.toggle.main}` }}
+                style={{ color: `${theme.palette.background.main}` }}
               />
             </Button>
           </Box>

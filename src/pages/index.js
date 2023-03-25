@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 
 export default function Home() {
   const user = useSelector(store => store.user);
-  const theme = useSelector(store => store.theme);
+  const theme = useSelector(store => store.activeTheme.theme);
 
   return (
     <>
