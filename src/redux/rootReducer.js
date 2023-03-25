@@ -1,16 +1,35 @@
 // rootReducer.js
-import { combineReducers } from "redux";
+import {combineReducers} from "redux";
 
-const INITIAL_USER_STATE = { loggedIn: {} };
-const INITIAL_THEME_STATE = { theme: "light" };
+// Attempt to get info from local storage
+const user =
+  (typeof window !== "undefined" && JSON.parse(localStorage.getItem("user"))) ||
+  {};
+const theme =
+  (typeof window !== "undefined" &&
+    JSON.parse(localStorage.getItem("theme"))) ||
+  "light";
+
+const INITIAL_USER_STATE = {loggedIn: user};
+const INITIAL_THEME_STATE = {theme: theme};
+console.log(INITIAL_THEME_STATE);
 
 function userReducer(state = INITIAL_USER_STATE, action) {
+  console.log(state.theme);
   switch (action.type) {
     case "LOGIN":
-      return { ...state, loggedIn: { ...action.payload } };
+      // Save user to local storage
+      if (typeof window !== "undefined") {
+        localStorage.setItem("user", JSON.stringify(action.payload));
+      }
+      return {...state, loggedIn: {...action.payload}};
 
     case "LOGOUT":
-      return { ...state, loggedIn: {} };
+      // Remove user from local storage
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("user");
+      }
+      return {...state, loggedIn: null};
 
     default:
       return state;
@@ -20,7 +39,12 @@ function userReducer(state = INITIAL_USER_STATE, action) {
 function themeReducer(state = INITIAL_THEME_STATE, action) {
   switch (action.type) {
     case "CHANGE_THEME":
-      return { ...state, theme: action.payload };
+      // Save theme to local storage
+      if (typeof window !== "undefined") {
+        localStorage.setItem("theme", JSON.stringify(action.payload));
+      }
+      console.log(state);
+      return {...state, theme: action.payload};
 
     default:
       return state;
