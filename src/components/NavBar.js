@@ -4,37 +4,52 @@ import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import uuid4 from "uuid4";
-import { lightTheme, darkTheme } from "@/config/theme";
+import { darkTheme, lightTheme } from "@/config/theme";
 
 //MaterialUI Imports
-import { AppBar, Box, Divider, Drawer } from "@mui/material";
-import { List, ListItem, ListItemButton, ListItemText } from "@mui/material";
-import { Toolbar, Typography, Button, IconButton } from "@mui/material";
+import {
+  AppBar,
+  Box,
+  Button,
+  Divider,
+  Drawer,
+  IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  Toolbar,
+  Typography,
+} from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
-
-
 
 function NavBar(props) {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = useState(false);
   const [navItems, setNavItems] = useState([]);
-  
-  let isLoggedIn = true;
+
   const router = useRouter();
-  let colorMode = useSelector((store) => store.activeTheme.theme);
+  let colorMode = useSelector((store) => store.theme.theme);
   const theme = colorMode === "light" ? lightTheme : darkTheme;
   const dispatch = useDispatch();
+  const user = useSelector((store) => store.user.loggedIn);
 
   const toggleTheme = () => {
-    dispatch({ type: "CHANGE_THEME", payload: colorMode === "light" ? "dark" : "light"  });
+    dispatch({
+      type: "CHANGE_THEME",
+      payload: colorMode === "light" ? "dark" : "light",
+    });
   };
 
   const drawerWidth = 240;
 
   useEffect(() => {
-    setNavItems(isLoggedIn ? ["Companies", "Jobs", "Profile", "Logout"] : ["Login", "Signup"])    
-  }, [isLoggedIn])
+    setNavItems(
+      user.user
+        ? ["Companies", "Jobs", "Profile", "Logout"]
+        : ["Login", "Signup"]
+    );
+  }, [user]);
 
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
