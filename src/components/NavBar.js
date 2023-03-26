@@ -27,7 +27,6 @@ function NavBar(props) {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = useState(false);
   const [navItems, setNavItems] = useState([]);
-
   const router = useRouter();
   let colorMode = useSelector((store) => store.theme.theme);
   const theme = colorMode === "light" ? lightTheme : darkTheme;
@@ -45,9 +44,7 @@ function NavBar(props) {
 
   useEffect(() => {
     setNavItems(
-      user.user
-        ? ["Companies", "Jobs", "Profile", "Logout"]
-        : ["Login", "Signup"]
+      user.user ? ["Login", "Signup", "Profile", "Logout"] : ["Login", "Signup"]
     );
   }, [user]);
 
@@ -102,6 +99,7 @@ function NavBar(props) {
             </ListItemButton>
           </ListItem>
         ))}
+
         <Brightness4Icon onClick={toggleTheme} />
       </List>
     </Box>
@@ -159,6 +157,7 @@ function NavBar(props) {
                 </Button>
               </Link>
             ))}
+
             <Button key="theme-toggle" onClick={toggleTheme}>
               <Brightness4Icon
                 style={{ color: `${theme.palette.background.main}` }}
