@@ -1,10 +1,13 @@
 // General Imports
+import {useState, useEffect} from "react";
 import {CacheProvider} from "@emotion/react";
-import createEmotionCache from "../config/createEmotionCache";
+import createEmotionCache from "@/config/createEmotionCache";
 import rootReducer from "@/redux/rootReducer.js";
 import {Provider, useSelector} from "react-redux";
 import {configureStore} from "@reduxjs/toolkit";
 import {darkTheme, lightTheme} from "@/config/theme";
+import {useScrollTrigger} from "@mui/material";
+
 
 // MaterialUI Imports
 import {ThemeProvider} from "@mui/material/styles";
@@ -25,12 +28,55 @@ const store = configureStore({
   reducer: rootReducer,
 });
 
-function ThemeWrapper({children}) {
-  const colorMode = useSelector((state) => state.theme.theme);
-  const theme = colorMode === "light" ? lightTheme : darkTheme;
+function ThemeWrapper({ children }) {
+  const [theme, setTheme] = useState( null );
 
-  return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
+  useEffect(() => {
+    const storedTheme = localStorage.getItem("theme");
+    if (storedTheme === "dark") {
+      setTheme(darkTheme);
+    } else {
+      setTheme(lightTheme);
+    }
+  } , []);
+
+  const toggleTheme = () => {
+    setTheme((currentTheme) =>
+      currentTheme.palette.mode === "light" ? darkTheme : lightTheme
+    );
+  };
+
+  useEffect(() => {
+    const storedTheme = localStorage.getItem("theme");
+    if (storedTheme === "dark") {
+      setTheme(darkTheme);
+    } else {
+      setTheme(lightTheme);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (theme) {
+      let mode = theme.palette.mode;
+      localStorage.setItem("theme", mode);
+      document.body.style.backgroundColor = theme.palette.background.main;
+    }
+  }, [theme]);
+
+  if (!theme) {
+    return "Loading";
+  }
+
+  return (
+    <ThemeProvider theme={theme}>
+      <NoSsr>
+        <NavBar onToggleTheme={toggleTheme} />
+      </NoSsr>
+      {children}
+    </ThemeProvider>
+  );
 }
+
 
 export default function MyApp(props) {
   const {Component, emotionCache = clientSideEmotionCache, pageProps} = props;
@@ -40,9 +86,6 @@ export default function MyApp(props) {
       <Provider store={store}>
         <CssBaseline/>
         <ThemeWrapper>
-          <NoSsr>
-            <NavBar/>
-          </NoSsr>
           <Component {...pageProps} />
         </ThemeWrapper>
       </Provider>
