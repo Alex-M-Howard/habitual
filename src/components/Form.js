@@ -1,8 +1,11 @@
 import { TextField, Button, Grid } from "@mui/material";
 import useFields from "@/hooks/useFields";
+import {useTheme} from "@mui/material/styles";
 
 function Form({ fields, initialValues, handleSubmit, buttonText }) {
   const [formData, handleChange] = useFields(initialValues);
+  const theme = useTheme();
+  console.log(theme)
 
   const renderFields = fields.map((field) => {
     return (
@@ -19,6 +22,9 @@ function Form({ fields, initialValues, handleSubmit, buttonText }) {
           onChange={handleChange}
           required
           style={{width: '350px'}}
+          InputProps={{
+            style: { color: `${theme.palette.text.main}` },
+          }}
         />
       </Grid>
     );

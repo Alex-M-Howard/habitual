@@ -5,12 +5,14 @@ import { useDispatch } from "react-redux";
 import { Alert, AlertTitle, Grid, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import useMessageTimer from "@/hooks/useAlerts";
+import { useTheme } from "@mui/material/styles";
 
 function Signup() {
   const [error, setError] = useState(null);
   const [hidden, hide] = useMessageTimer(error, 3000);
   const router = useRouter();
   const dispatch = useDispatch();
+  const theme = useTheme();
 
   const fields = [
     { name: "firstName", label: "First Name" },
@@ -59,7 +61,7 @@ function Signup() {
           {error}
         </Alert>
       </div>
-      <Typography align="center" variant="h3" sx={{ mt: 5 }}>
+      <Typography align="center" variant="h3" sx={{ mt: 5, color: `${theme.palette.text.main}` }}>
         Signup
       </Typography>
 

@@ -7,8 +7,8 @@ import uuid4 from "uuid4";
 import { darkTheme, lightTheme } from "@/config/theme";
 
 //MaterialUI Imports
-import {
-  AppBar,
+import
+{ AppBar,
   Box,
   Button,
   Divider,
@@ -22,25 +22,18 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
-
+import {useTheme} from "@mui/material/styles";
 function NavBar(props) {
-  const { window } = props;
+  const { window, onToggleTheme } = props;
   const [mobileOpen, setMobileOpen] = useState(false);
   const [navItems, setNavItems] = useState([]);
   const router = useRouter();
-  let colorMode = useSelector((store) => store.theme.theme);
-  const theme = colorMode === "light" ? lightTheme : darkTheme;
-  const dispatch = useDispatch();
   const user = useSelector((store) => store.user.loggedIn);
 
-  const toggleTheme = () => {
-    dispatch({
-      type: "CHANGE_THEME",
-      payload: colorMode === "light" ? "dark" : "light",
-    });
-  };
+  const theme = useTheme();
 
   const drawerWidth = 240;
+
 
   useEffect(() => {
     setNavItems(
@@ -57,7 +50,7 @@ function NavBar(props) {
       onClick={handleDrawerToggle}
       sx={{ textAlign: "center" }}
       style={{
-        backgroundColor: `${theme.palette.secondary.main}`,
+        backgroundColor: `${theme.palette.background.navbar}`,
         height: "100%",
       }}
     >
@@ -67,7 +60,7 @@ function NavBar(props) {
           alt="home"
           style={{
             textDecoration: "none",
-            color: `${theme.palette.text.main}`,
+            color: `${theme.palette.text.navbar}`,
           }}
         >
           Habitual
@@ -90,7 +83,7 @@ function NavBar(props) {
                         ? "bold"
                         : "normal"
                     }`,
-                    color: `${theme.palette.text.main}`,
+                    color: `${theme.palette.text.navbar}`,
                   }}
                 >
                   {item}
@@ -100,7 +93,7 @@ function NavBar(props) {
           </ListItem>
         ))}
 
-        <Brightness4Icon onClick={toggleTheme} />
+        <Brightness4Icon onClick={onToggleTheme} />
       </List>
     </Box>
   );
@@ -111,7 +104,7 @@ function NavBar(props) {
   return (
     <Box sx={{ display: "flex" }}>
       <AppBar component="nav" position="sticky">
-        <Toolbar style={{ backgroundColor: `${theme.palette.primary.main}` }}>
+        <Toolbar style={{ backgroundColor: `${theme.palette.background.navbar}` }}>
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -129,7 +122,7 @@ function NavBar(props) {
             <Link
               href="/"
               alt="home"
-              style={{ textDecoration: "none", color: "#fff" }}
+              style={{ textDecoration: "none", color: `${theme.palette.text.navbar}` }}
             >
               Habitual
             </Link>
@@ -145,7 +138,7 @@ function NavBar(props) {
                 <Button
                   key={item}
                   sx={{
-                    color: "#fff",
+                    color: `${theme.palette.text.navbar}`,
                     fontWeight: `${
                       router.pathname === `/${item.toLowerCase()}`
                         ? "bold"
@@ -158,9 +151,9 @@ function NavBar(props) {
               </Link>
             ))}
 
-            <Button key="theme-toggle" onClick={toggleTheme}>
+            <Button key="theme-toggle" onClick={onToggleTheme}>
               <Brightness4Icon
-                style={{ color: `${theme.palette.background.main}` }}
+                style={{ color: `${theme.palette.text.navbar}` }}
               />
             </Button>
           </Box>
