@@ -64,7 +64,7 @@ class Categories {
        FROM categories WHERE id = $1`,
       [id]
     );
-      console.log(existingCategories)
+
     if (existingCategories.rows.length < 1) {
       return { error: "Category not found. No operation completed." };
     }

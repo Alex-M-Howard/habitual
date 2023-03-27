@@ -1,12 +1,7 @@
-import Head from 'next/head';
-import styles from '@/styles/Home.module.css';
-import { useSelector } from 'react-redux';
+import Head from "next/head";
+import styles from "@/styles/Home.module.css";
 
 export default function Home() {
-  const user = useSelector(store => store.user);
-  const theme = useSelector(store => store.theme);
-
-  console.log(user, theme)
   return (
     <>
       <Head>
@@ -17,7 +12,12 @@ export default function Home() {
       </Head>
       <main className={styles.main}>
         <h1>Habitual</h1>
+        <h2>Track your habits</h2>
+        <p>
+          Habitual is a habit tracking app that allows you to track your habits
+          and see your progress over time.
+        </p>
       </main>
     </>
-  )
+  );
 }

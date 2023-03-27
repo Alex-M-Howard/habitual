@@ -1,35 +1,37 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import Form from "@/components/Form";
-import { Grid, Alert, AlertTitle, Typography } from "@mui/material";
-import JoblyApi from "@/API";
-import {UserContext} from "@/context/UserContext";
-import {useRouter} from "next/router";
+import { Alert, AlertTitle, Grid, Typography } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { useRouter } from "next/router";
+import axios from "axios";
+import useMessageTimer from "@/hooks/useAlerts";
 
 function Login() {
   const [error, setError] = useState(null);
-  const { toggleLoginStatus, loginUser } = useContext(UserContext);
   const router = useRouter();
+  const dispatch = useDispatch();
+  const [hidden, hide] = useMessageTimer(error, 3000);
 
   const fields = [
-    { name: "username", label: "Username" },
+    { name: "email", label: "Email" },
     { name: "password", label: "Password" },
   ];
 
   const initialValues = {
-    username: "",
-    password: ""
+    email: "",
+    password: "",
   };
 
   const handleSubmit = async (formData) => {
     if (error) setError(null);
 
-    let res = await JoblyApi.loginUser(formData);
-
-    if (res.error) {
-      setError(res.error);
-    } else {
-      loginUser(formData.username, res.token);
-      router.push('/')
+    try {
+      const { data } = await axios.post("/api/login", formData);
+      dispatch({ type: "LOGIN", payload: data });
+      await router.push("/");
+    } catch (error) {
+      setError("Email/Password is incorrect.");
+      hide(1);
     }
   };
 
@@ -38,15 +40,21 @@ function Login() {
       container
       direction="column"
       justifyContent="center"
-      alignItems="center">
-      {error !== null ? (
-        <Alert
-          sx={{ m: 2, minWidth: "350px", maxWidth: "350px" }}
-          severity="error">
+      alignItems="center"
+    >
+      <div
+        style={{
+          height: "150px",
+          overflow: "hidden",
+          opacity: hidden ? 1 : 0,
+          transition: "opacity 0.3s ease-in-out",
+        }}
+      >
+        <Alert sx={{ m: 2, width: "350px" }} severity="error">
           <AlertTitle>Error</AlertTitle>
           {error}
         </Alert>
-      ) : null}
+      </div>
       <Typography align="center" variant="h3" sx={{ mt: 5 }}>
         Login
       </Typography>

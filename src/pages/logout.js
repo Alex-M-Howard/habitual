@@ -1,14 +1,15 @@
-import React, {useContext} from "react";
-import { UserContext } from "@/context/UserContext";
+import React from "react";
 import { useRouter } from "next/router";
+import { useDispatch } from "react-redux";
 
 function Logout() {
-  const {logoutUser, toggleLoginStatus} = useContext(UserContext);
+  const dispatch = useDispatch();
   const router = useRouter();
 
-  router.push('/login');
-  logoutUser();
-
+  // Logout function due to React error when using dispatch AND router.push
+  const logout = () => dispatch({ type: "LOGOUT" });
+  router.push("/login");
+  logout();
 }
 
 export default Logout;
