@@ -1,8 +1,10 @@
 import React, { useState, useContext } from "react";
 import Form from "@/components/Form";
 import { Grid, Alert, AlertTitle, Typography } from "@mui/material";
+import {useSelector} from "react-redux";
 
 function Profile() {
+  const user = useSelector(store => store.user.user);
   let changes = null;
   
   if (!user) {
