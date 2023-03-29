@@ -1,4 +1,4 @@
-import { createTheme } from "@mui/material/styles";
+import {createTheme} from "@mui/material/styles";
 
 // Create a theme instance.
 const lightTheme = createTheme({
@@ -14,6 +14,7 @@ const lightTheme = createTheme({
     },
     error: {
       main: "#CC1236",
+      background: "#FF000033",
     },
     accent: {
       main: "#92f183",
@@ -21,13 +22,13 @@ const lightTheme = createTheme({
     },
     text: {
       main: "#000",
-      navbar: "#fb5a5a"
+      navbar: "#fb5a5a",
     },
     background: {
       main: "#FFF",
-      navbar: "#FFF"
-    }
-  }
+      navbar: "#FFF",
+    },
+  },
 });
 
 const darkTheme = createTheme({
@@ -43,6 +44,7 @@ const darkTheme = createTheme({
     },
     error: {
       main: "#CC1236",
+      background: "#FF000033",
     },
     accent: {
       main: "#5E9A54",
@@ -50,13 +52,13 @@ const darkTheme = createTheme({
     },
     text: {
       main: "#FFF",
-      navbar: "#fb5a5a"
+      navbar: "#fb5a5a",
     },
     background: {
       main: "#7c7c7c",
-      navbar: "#7c7c7c"
-    }
-  }
+      navbar: "#7c7c7c",
+    },
+  },
 });
 
 export { lightTheme, darkTheme };

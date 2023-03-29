@@ -1,14 +1,13 @@
 //General Imports
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import uuid4 from "uuid4";
-import { darkTheme, lightTheme } from "@/config/theme";
 
 //MaterialUI Imports
-import
-{ AppBar,
+import {
+  AppBar,
   Box,
   Button,
   Divider,
@@ -22,7 +21,8 @@ import
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
-import {useTheme} from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
+
 function NavBar(props) {
   const { window, onToggleTheme } = props;
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -34,10 +34,11 @@ function NavBar(props) {
 
   const drawerWidth = 240;
 
-
   useEffect(() => {
     setNavItems(
-      user.user ? ["Login", "Signup", "Profile", "Logout"] : ["Login", "Signup"]
+      user.user
+        ? ["Login", "Signup", "Profile", "Habits", "Info", "Logout"]
+        : ["Login", "Signup"]
     );
   }, [user]);
 
@@ -104,7 +105,9 @@ function NavBar(props) {
   return (
     <Box sx={{ display: "flex" }}>
       <AppBar component="nav" position="sticky">
-        <Toolbar style={{ backgroundColor: `${theme.palette.background.navbar}` }}>
+        <Toolbar
+          style={{ backgroundColor: `${theme.palette.background.navbar}` }}
+        >
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -122,7 +125,10 @@ function NavBar(props) {
             <Link
               href="/"
               alt="home"
-              style={{ textDecoration: "none", color: `${theme.palette.text.navbar}` }}
+              style={{
+                textDecoration: "none",
+                color: `${theme.palette.text.navbar}`,
+              }}
             >
               Habitual
             </Link>
