@@ -1,69 +1,96 @@
-// import React, { useState, useContext } from "react";
-// import Form from "@/components/Form";
-// import { Grid, Alert, AlertTitle, Typography } from "@mui/material";
-// import { UserContext } from "@/context/UserContext";
-// import JoblyApi from "@/API";
+import React, { useState } from "react";
+import Form from "@/components/Form";
+import { Alert, AlertTitle, Grid, Typography } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import { useSelector } from "react-redux";
+import useMessageTimer from "@/hooks/useAlerts";
+import axios from "axios";
 
-// function Profile() {
-//   const [error, setError] = useState(null);
-//   const { user } = useContext(UserContext);
-//   let changes = null;
+function Profile() {
+  const [error, setError] = useState(null);
+  const [hidden, hide] = useMessageTimer(error, 3000);
+  const { user, token } = useSelector((store) => store.user.loggedIn);
+  const theme = useTheme();
 
-//   if (!user) {
-//     return null;
-//   }
+  let changes = null;
 
-//   const fields = [
-//     { name: "firstName", label: "First Name" },
-//     { name: "lastName", label: "Last Name" },
-//     { name: "email", label: "Email" },
-//   ];
+  if (!user) {
+    if (!user) return null;
+  }
 
-//   const initialValues = {
-//     firstName: user.firstName,
-//     lastName: user.lastName,
-//     email: user.email,
-//   };
+  const fields = [
+    { name: "firstName", label: "First Name" },
+    { name: "lastName", label: "Last Name" },
+    { name: "email", label: "Email" },
+  ];
 
-//   const handleSubmit = async (formData) => {
-//     if (error) setError(null);
+  const initialValues = {
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+  };
 
-//     let res = await JoblyApi.updateUser(user.username, formData);
+  console.log(user);
+  const handleSubmit = async (formData) => {
+    if (error) setError(null);
 
-//     if (res.error) {
-//       setError(res.error);
-//     } else {
-//       changes = true;
-//     }
-//   };
+    let username = formData.email.split("@")[0];
+    try {
+      let res = await axios.put(`/api/users/${username}`, formData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      // TODO - update user in redux store
+      // TODO - update user in local storage
+      // TODO - Fix error message to be a success message
+      setError("Profile Updated");
+      hide(1);
+    } catch (error) {
+      setError(error.message);
+      hide(1);
+    }
 
-//   return (
-//     <Grid
-//       container
-//       direction="column"
-//       justifyContent="center"
-//       alignItems="center">
-//       {error !== null ? (
-//         <Alert
-//           sx={{ m: 2, minWidth: "350px", maxWidth: "350px" }}
-//           severity="error">
-//           <AlertTitle>Error</AlertTitle>
-//           {error}
-//         </Alert>
-//       ) : null}
-//       <Typography align="center" variant="h3" sx={{ mt: 5 }}>
-//         {`${user.username}'s`} Profile
-//       </Typography>
+    changes = true;
+  };
 
-//       <Form
-//         fields={fields}
-//         initialValues={initialValues}
-//         handleSubmit={handleSubmit}
-//         buttonText="Save"
-//       />
-//     </Grid>
-//   );
-// }
+  return (
+    <Grid
+      container
+      direction="column"
+      justifyContent="center"
+      alignItems="center"
+    >
+      <div
+        style={{
+          height: "150px",
+          overflow: "hidden",
+          opacity: hidden ? 1 : 0,
+          transition: "opacity 0.3s ease-in-out",
+        }}
+      >
+        <Alert
+          sx={{
+            m: 2,
+            width: "350px",
+            backgroundColor: `${theme.palette.error.background}`,
+          }}
+          severity="error"
+        >
+          <AlertTitle>Error</AlertTitle>
+          {error}
+        </Alert>
+      </div>
+      <Typography align="center" variant="h3" sx={{ mt: 5 }}>
+        {`${user.firstName}'s`} Profile
+      </Typography>
 
+      <Form
+        fields={fields}
+        initialValues={initialValues}
+        handleSubmit={handleSubmit}
+        buttonText="Save"
+      />
+    </Grid>
+  );
+}
 
-// export default Profile;
+export default Profile;
