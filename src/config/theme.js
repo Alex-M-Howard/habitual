@@ -21,9 +21,11 @@ const lightTheme = createTheme({
     },
     text: {
       main: "#000",
+      navbar: "#fb5a5a"
     },
     background: {
-      main: "#FFF"
+      main: "#FFF",
+      navbar: "#FFF"
     }
   }
 });
@@ -47,10 +49,12 @@ const darkTheme = createTheme({
       alternate: "#92f183",
     },
     text: {
-      main: "#fff",
+      main: "#FFF",
+      navbar: "#fb5a5a"
     },
     background: {
-      main: "#0B0B45",
+      main: "#7c7c7c",
+      navbar: "#7c7c7c"
     }
   }
 });

@@ -5,12 +5,14 @@ import { useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import axios from "axios";
 import useMessageTimer from "@/hooks/useAlerts";
+import { useTheme} from "@mui/material/styles";
 
 function Login() {
   const [error, setError] = useState(null);
   const router = useRouter();
   const dispatch = useDispatch();
   const [hidden, hide] = useMessageTimer(error, 3000);
+  const theme = useTheme();
 
   const fields = [
     { name: "email", label: "Email" },
@@ -55,7 +57,7 @@ function Login() {
           {error}
         </Alert>
       </div>
-      <Typography align="center" variant="h3" sx={{ mt: 5 }}>
+      <Typography align="center" variant="h3" sx={{ mt: 5, color: `${theme.palette.text.main}` }}>
         Login
       </Typography>
 
