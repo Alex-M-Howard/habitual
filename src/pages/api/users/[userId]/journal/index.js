@@ -21,8 +21,8 @@ export default async function handler(req, res) {
   // Request Method Switch
   switch (req.method) {
     case "GET":
-      console.log(req);
-      validator = jsonschema.validate(req.body, journalGetSchema);
+      req.query;
+      validator = jsonschema.validate(req.query, journalGetSchema);
 
       if (!validator.valid) {
         const errs = validator.errors.map((error) => error.stack);

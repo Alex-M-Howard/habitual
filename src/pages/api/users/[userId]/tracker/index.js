@@ -1,5 +1,6 @@
 import { authenticateJWT, ensureLoggedIn } from "@/middleware/auth";
 import User from "@/models/user";
+
 const jsonschema = require("jsonschema");
 const trackerGetSchema = require("@/models/schemas/trackerGet.json");
 const trackerPostSchema = require("@/models/schemas/trackerPost.json");
@@ -32,8 +33,6 @@ export default async function handler(req, res) {
       if (response.error) return res.status(400).json(response);
       return res.status(200).json(response);
 
-    
-    
     case "POST":
       validator = jsonschema.validate(req.body, trackerPostSchema);
 
@@ -47,18 +46,17 @@ export default async function handler(req, res) {
       if (response.error) return res.status(400).json(response);
       return res.status(200).json(response);
 
-    
     // TODO Add delete to undo a completed habit
     // case "DELETE":
-      // validator = jsonschema.validate(req.body, userHabitDeleteSchema);
+    // validator = jsonschema.validate(req.body, userHabitDeleteSchema);
 
-      // if (!validator.valid) {
-      //   const errs = validator.errors.map((error) => error.stack);
-      //   return res.status(400).json({ errors: errs });
-      // }
+    // if (!validator.valid) {
+    //   const errs = validator.errors.map((error) => error.stack);
+    //   return res.status(400).json({ errors: errs });
+    // }
 
-      // response = await User.removeUserHabit(req.body);
-      // return res.status(200).json(response);
+    // response = await User.removeUserHabit(req.body);
+    // return res.status(200).json(response);
 
     default:
       return res.status(405).json({ error: "Method not allowed" });
