@@ -56,12 +56,23 @@ function Signup() {
           transition: "opacity 0.3s ease-in-out",
         }}
       >
-        <Alert sx={{ m: 2, width: "350px" }} severity="error">
+        <Alert
+          sx={{
+            m: 2,
+            width: "350px",
+            backgroundColor: `${theme.palette.error.background}`,
+          }}
+          severity="error"
+        >
           <AlertTitle>Error</AlertTitle>
           {error}
         </Alert>
       </div>
-      <Typography align="center" variant="h3" sx={{ mt: 5, color: `${theme.palette.text.main}` }}>
+      <Typography
+        align="center"
+        variant="h3"
+        sx={{ mt: 5, color: `${theme.palette.text.main}` }}
+      >
         Signup
       </Typography>
 

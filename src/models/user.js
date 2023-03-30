@@ -1,10 +1,14 @@
 "use strict";
 
-const {db, BCRYPT_WORK_FACTOR} = require("../config/db");
+const { db, BCRYPT_WORK_FACTOR } = require("../config/db");
 const { sqlForPartialUpdate } = require("../helpers/sql");
-const { NotFoundError, BadRequestError, UnauthorizedError } = require("../helpers/apiError");
+const {
+  NotFoundError,
+  BadRequestError,
+  UnauthorizedError,
+} = require("../helpers/apiError");
 const bcrypt = require("bcrypt");
-const date = require('date-and-time');
+const date = require("date-and-time");
 
 /** Related functions for users. */
 
@@ -18,7 +22,8 @@ class User {
     // try to find the user first
     const result = await db.query(
       `
-      SELECT     
+      SELECT
+        id,     
         password,
         first_name AS "firstName",
         last_name AS "lastName",
@@ -73,7 +78,7 @@ class User {
             date_joined
            )
            VALUES ($1, $2, $3, $4, $5)
-           RETURNING first_name AS "firstName", last_name AS "lastName", email, date_joined AS "dateJoined"`,
+           RETURNING id, first_name AS "firstName", last_name AS "lastName", email, date_joined AS "dateJoined"`,
       [hashedPassword, firstName, lastName, email, joined]
     );
 
@@ -84,10 +89,10 @@ class User {
 
   /**
    *
-   * @param {string} email
    * @returns {user: {id, firstName, lastName, email, dateJoined, habits: []}}
+   * @param userId
    */
-  static async get(email) {
+  static async get(userId) {
     const userRes = await db.query(
       `SELECT 
         id,
@@ -97,9 +102,9 @@ class User {
         email,
         date_joined AS "dateJoined"
       FROM users
-      WHERE email = $1
+      WHERE id = $1
       `,
-      [email]
+      [userId]
     );
 
     const user = userRes.rows[0];
@@ -133,7 +138,8 @@ class User {
     const querySql = `UPDATE users 
                       SET ${setCols} 
                       WHERE email = ${emailVarIdx} 
-                      RETURNING email,
+                      RETURNING id,
+                                email,
                                 first_name AS "firstName",
                                 last_name AS "lastName",
                                 date_joined AS "dateJoined"`;
@@ -170,31 +176,27 @@ class User {
     return { response: `User ${email} successfully deleted.` };
   }
 
-
   /**
    *
    * @param {int} id
    * @returns {habits: []}
    */
-  static async getUserHabits(id) {
+  static async getUserHabits(userId) {
     const userHabits = await db.query(
       `SELECT 
       habits.name AS "habitName",
-      frequency,
-      streak,
-      longest_streak AS "longestStreak"
+      frequency
       FROM user_habits
       JOIN habits ON habits.id=habit_id
       WHERE user_id=$1
       `,
-      [id]
+      [userId]
     );
 
     let habits = userHabits.rows;
 
     return { habits };
   }
-
 
   /**
    *
@@ -209,10 +211,12 @@ class User {
       WHERE user_id = $1 AND habit_id = $2
       `,
       [userId, habitId]
-    )
+    );
 
     if (existanceCheck.rows.length > 0) {
-      return { error: `User ${userId} already has habit ${habitId}. No operations performed.` };
+      return {
+        error: `User ${userId} already has habit ${habitId}. No operations performed.`,
+      };
     }
 
     const userHabits = await db.query(
@@ -222,9 +226,7 @@ class User {
        RETURNING
         user_id AS "userID",
         habit_id AS "habitID",
-        frequency,
-        streak,
-        longest_streak AS "longestStreak"
+        frequency
       `,
       [userId, habitId, frequency]
     );
@@ -232,19 +234,18 @@ class User {
     return userHabits.rows;
   }
 
-
   /**
    *  Get user habit log
    */
-  static async getUserLog({ userId }) {
-
+  static async getUserLog(userId) {
     const existanceCheck = await db.query(
       `
-      SELECT * FROM users WHERE id=$1`,[userId]
-    )
+      SELECT * FROM users WHERE id=$1`,
+      [userId]
+    );
 
     if (existanceCheck.rows.length < 1) {
-      return {error: `User: ${userId} not found.` };
+      return { error: `User: ${userId} not found.` };
     }
 
     const userLog = await db.query(
@@ -256,15 +257,13 @@ class User {
     );
 
     return { log: userLog.rows };
-
   }
-
 
   /**
    * Log user habit
    *
    */
-  static async logUserHabit({ userId, habitId, date = new Date()}) {
+  static async logUserHabit({ userId, habitId, date = new Date() }) {
     let response;
 
     const existanceUserHabitCheck = await db.query(
@@ -277,7 +276,9 @@ class User {
     );
 
     if (existanceUserHabitCheck.rows.length < 1) {
-      return { error: `User: ${userId} has no habit: ${habitId}. not found. No operation performed.` };
+      return {
+        error: `User: ${userId} has no habit: ${habitId}. not found. No operation performed.`,
+      };
     }
 
     const existanceTrackerCheck = await db.query(
@@ -286,7 +287,7 @@ class User {
       FROM tracker
       WHERE user_id=$1 AND habit_id=$2 AND day_date=$3`,
       [userId, habitId, date]
-    )
+    );
 
     if (!(date instanceof Date)) {
       date = new Date(date);
@@ -301,11 +302,13 @@ class User {
         RETURNING *`,
         [userId, habitId, date]
       );
-    } else { 
-      const dateOptions = { weekday: 'long' };
-      const dayName = date.toLocaleString('en-US', dateOptions);
+    } else {
+      const dateOptions = { weekday: "long" };
+      const dayName = date.toLocaleString("en-US", dateOptions);
 
-      let dayId = await db.query('SELECT id FROM days WHERE name = $1', [dayName]);
+      let dayId = await db.query("SELECT id FROM days WHERE name = $1", [
+        dayName,
+      ]);
       dayId = dayId.rows[0].id;
 
       response = await db.query(
@@ -318,9 +321,8 @@ class User {
       );
     }
 
-    return {response: response.rows}
+    return { response: response.rows };
   }
-
 
   /**
    *
@@ -328,7 +330,7 @@ class User {
    * @param {int} habitId
    * @returns {response: "UserHabit successfully deleted"}
    */
-  static async removeUserHabit({userId, habitId}) {
+  static async removeUserHabit({ userId, habitId }) {
     let result = await db.query(
       `DELETE
            FROM user_habits
@@ -347,4 +349,5 @@ class User {
     return { response: `User habit successfully deleted.` };
   }
 }
+
 module.exports = User;

@@ -10,7 +10,7 @@ class Journals {
    * Returns {journals: [{ id, date, entry }, ...]}
    **/
 
-  static async getJournals({userId}) {
+  static async getJournals({ id }) {
     const result = await db.query(
       `SELECT 
         id,
@@ -19,21 +19,18 @@ class Journals {
       FROM journals
       WHERE user_id=$1
       ORDER BY date`,
-      [userId]
+      [id]
     );
 
     return { journals: result.rows };
   }
 
-  
   /**
    *
    * @param {name} Adds a new journal
    * @returns {journals: {id, date, entry}}
    */
   static async add({ userId, date = new Date(), entry }) {
-
-
     const result = await db.query(
       `INSERT INTO journals (user_id, date, entry)
     VALUES ($1, $2, $3)
@@ -61,7 +58,6 @@ class Journals {
       return { error: "Journal not found. No operation completed." };
     }
 
-
     let result = await db.query(
       `DELETE
            FROM journals
@@ -78,4 +74,5 @@ class Journals {
     return { response: `Journal: ID-${id} successfully deleted.` };
   }
 }
+
 module.exports = Journals;

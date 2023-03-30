@@ -1,14 +1,21 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import Form from "@/components/Form";
-import { Grid, Alert, AlertTitle, Typography } from "@mui/material";
-import {useSelector} from "react-redux";
+import { Alert, AlertTitle, Grid, Typography } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import { useSelector } from "react-redux";
+import useMessageTimer from "@/hooks/useAlerts";
+import axios from "axios";
 
 function Profile() {
-  const user = useSelector(store => store.user.user);
+  const [error, setError] = useState(null);
+  const [hidden, hide] = useMessageTimer(error, 3000);
+  const { user, token } = useSelector((store) => store.user.loggedIn);
+  const theme = useTheme();
+
   let changes = null;
-  
+
   if (!user) {
-    return null;
+    if (!user) return null;
   }
 
   const fields = [
@@ -23,15 +30,26 @@ function Profile() {
     email: user.email,
   };
 
+  console.log(user);
   const handleSubmit = async (formData) => {
     if (error) setError(null);
-    
 
-    if (res.error) {
-      setError(res.error);
-    } else {
-      changes = true;
+    let username = formData.email.split("@")[0];
+    try {
+      let res = await axios.put(`/api/users/${username}`, formData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      // TODO - update user in redux store
+      // TODO - update user in local storage
+      // TODO - Fix error message to be a success message
+      setError("Profile Updated");
+      hide(1);
+    } catch (error) {
+      setError(error.message);
+      hide(1);
     }
+
+    changes = true;
   };
 
   return (
@@ -39,17 +57,30 @@ function Profile() {
       container
       direction="column"
       justifyContent="center"
-      alignItems="center">
-      {error !== null ? (
+      alignItems="center"
+    >
+      <div
+        style={{
+          height: "150px",
+          overflow: "hidden",
+          opacity: hidden ? 1 : 0,
+          transition: "opacity 0.3s ease-in-out",
+        }}
+      >
         <Alert
-          sx={{ m: 2, minWidth: "350px", maxWidth: "350px" }}
-          severity="error">
+          sx={{
+            m: 2,
+            width: "350px",
+            backgroundColor: `${theme.palette.error.background}`,
+          }}
+          severity="error"
+        >
           <AlertTitle>Error</AlertTitle>
           {error}
         </Alert>
-      ) : null}
+      </div>
       <Typography align="center" variant="h3" sx={{ mt: 5 }}>
-        {`${user.username}'s`} Profile
+        {`${user.firstName}'s`} Profile
       </Typography>
 
       <Form
@@ -61,6 +92,5 @@ function Profile() {
     </Grid>
   );
 }
-
 
 export default Profile;

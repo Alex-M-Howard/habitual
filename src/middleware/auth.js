@@ -4,7 +4,6 @@
 
 const jwt = require("jsonwebtoken");
 
-
 /** Middleware: Authenticate user.
  *
  * If a token was provided, verify it, and, if valid, store the token payload
@@ -25,10 +24,9 @@ function authenticateJWT(token) {
  */
 
 function ensureLoggedIn(req) {
-  let token = req.rawHeaders[req.rawHeaders.indexOf('Authorization') + 1]
+  let token = req.rawHeaders[req.rawHeaders.indexOf("Authorization") + 1];
   return token;
 }
-
 
 /** Middleware to use when they must provide a valid token & be user matching
  *  username provided as route param.
@@ -37,14 +35,13 @@ function ensureLoggedIn(req) {
  */
 
 function ensureCorrectUser(user, req) {
-  const username = req.query.username;
-  if (username !== user.email.slice(0, user.email.indexOf('@'))) {
+  const userId = parseInt(req.query.userId);
+  if (userId !== user.id) {
     return false;
   }
 
-  return username;
+  return user;
 }
-
 
 module.exports = {
   authenticateJWT,

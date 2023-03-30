@@ -1,9 +1,8 @@
 import { authenticateJWT, ensureLoggedIn } from "@/middleware/auth";
-import Habits from "@/models/habits";
+import User from "@/models/user";
 
 const jsonschema = require("jsonschema");
-const habitNewSchema = require("@/models/schemas/habitNew.json");
-const habitDeleteSchema = require("@/models/schemas/habitDelete.json");
+const trackerPostSchema = require("@/models/schemas/trackerPost.json");
 
 export default async function handler(req, res) {
   let token, user, response, validator;
@@ -21,32 +20,38 @@ export default async function handler(req, res) {
   // Request Method Switch
   switch (req.method) {
     case "GET":
-      response = await Habits.findAll();
-      return res.status(200).json(response);
-
-    case "POST":
-      validator = jsonschema.validate(req.body, habitNewSchema);
-
-      if (!validator.valid) {
-        const errs = validator.errors.map((error) => error.stack);
-        return res.status(400).json({ errors: errs });
-      }
-
-      response = await Habits.add(req.query, req.body);
+      response = await User.getUserLog(parseInt(req.query.userId));
 
       if (response.error) return res.status(400).json(response);
       return res.status(200).json(response);
 
-    case "DELETE":
-      validator = jsonschema.validate(req.body, habitDeleteSchema);
+    case "POST":
+      validator = jsonschema.validate(req.body, trackerPostSchema);
 
       if (!validator.valid) {
         const errs = validator.errors.map((error) => error.stack);
         return res.status(400).json({ errors: errs });
       }
 
-      response = await Habits.remove(req.body);
+      response = await User.logUserHabit({
+        userId: parseInt(req.query.userId),
+        ...req.body,
+      });
+
+      if (response.error) return res.status(400).json(response);
       return res.status(200).json(response);
+
+    // TODO Add delete to undo a completed habit
+    // case "DELETE":
+    // validator = jsonschema.validate(req.body, userHabitDeleteSchema);
+
+    // if (!validator.valid) {
+    //   const errs = validator.errors.map((error) => error.stack);
+    //   return res.status(400).json({ errors: errs });
+    // }
+
+    // response = await User.removeUserHabit(req.body);
+    // return res.status(200).json(response);
 
     default:
       return res.status(405).json({ error: "Method not allowed" });

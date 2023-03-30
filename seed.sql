@@ -5,14 +5,14 @@ CREATE DATABASE IF NOT EXISTS habitual;
 \c habitual;
 
 -- Drop all tables if they exist
-DROP TABLE IF EXISTS user_habits;
-DROP TABLE IF EXISTS habit_categories;
-DROP TABLE IF EXISTS categories;
-DROP TABLE IF EXISTS journals;
-DROP TABLE IF EXISTS habits;
-DROP TABLE IF EXISTS days;
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS tracker;
+DROP TABLE IF EXISTS user_habits CASCADE;
+DROP TABLE IF EXISTS habit_categories CASCADE;
+DROP TABLE IF EXISTS categories CASCADE;
+DROP TABLE IF EXISTS journals CASCADE;
+DROP TABLE IF EXISTS habits CASCADE;
+DROP TABLE IF EXISTS days CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS tracker CASCADE;
 
 -- Create the tables
 CREATE TABLE users (
@@ -53,8 +53,6 @@ CREATE TABLE user_habits (
 user_id INTEGER REFERENCES users(id),
 habit_id INTEGER REFERENCES habits(id),
 frequency INTEGER,
-streak INTEGER DEFAULT 0,
-longest_streak INTEGER DEFAULT 0
 );
 
 CREATE TABLE days (

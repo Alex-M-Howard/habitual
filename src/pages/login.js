@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import axios from "axios";
 import useMessageTimer from "@/hooks/useAlerts";
-import { useTheme} from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 
 function Login() {
   const [error, setError] = useState(null);
@@ -52,12 +52,23 @@ function Login() {
           transition: "opacity 0.3s ease-in-out",
         }}
       >
-        <Alert sx={{ m: 2, width: "350px" }} severity="error">
+        <Alert
+          sx={{
+            m: 2,
+            width: "350px",
+            backgroundColor: `${theme.palette.error.background}`,
+          }}
+          severity="error"
+        >
           <AlertTitle>Error</AlertTitle>
           {error}
         </Alert>
       </div>
-      <Typography align="center" variant="h3" sx={{ mt: 5, color: `${theme.palette.text.main}` }}>
+      <Typography
+        align="center"
+        variant="h3"
+        sx={{ mt: 5, color: `${theme.palette.text.main}` }}
+      >
         Login
       </Typography>
 
