@@ -4,9 +4,11 @@
   "type": "object",
   "properties": {
     "userId": {
-      "type": "integer"
+      "type": "string"
     }
   },
   "additionalProperties": false,
-  "required": ["userId"]
+  "required": [
+    "userId"
+  ]
 }
