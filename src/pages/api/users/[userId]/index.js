@@ -15,9 +15,9 @@ export default async (req, res) => {
   try {
     token = ensureLoggedIn(req);
     user = authenticateJWT(token);
-    username = ensureCorrectUser(user, req);
+    user = ensureCorrectUser(user, req);
 
-    if (!username) throw new Error();
+    if (!user) throw new Error();
   } catch (error) {
     return res.status(401).json({ error: "Unauthorized" });
   }
@@ -25,7 +25,7 @@ export default async (req, res) => {
   // Request Method Switch
   switch (req.method) {
     case "GET":
-      response = await User.get(user.email);
+      response = await User.get(parseInt(req.query.userId));
 
       if (response.error) return res.status(400).json(response);
       return res.status(200).json(response);

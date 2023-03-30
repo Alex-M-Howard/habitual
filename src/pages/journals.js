@@ -23,8 +23,6 @@ function Journals() {
 
   const journals = getJournals();
 
-  console.log();
-
   return (
     <div>
       <h1>Journals</h1>

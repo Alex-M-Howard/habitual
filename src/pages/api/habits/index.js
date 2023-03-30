@@ -1,5 +1,6 @@
-import {authenticateJWT, ensureLoggedIn} from "@/middleware/auth";
+import { authenticateJWT, ensureLoggedIn } from "@/middleware/auth";
 import Habits from "@/models/habits";
+
 const jsonschema = require("jsonschema");
 const habitNewSchema = require("@/models/schemas/habitNew.json");
 const habitDeleteSchema = require("@/models/schemas/habitDelete.json");
@@ -17,15 +18,12 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
-
   // Request Method Switch
   switch (req.method) {
     case "GET":
       response = await Habits.findAll();
       return res.status(200).json(response);
 
-    
-    
     case "POST":
       validator = jsonschema.validate(req.body, habitNewSchema);
 
@@ -34,13 +32,11 @@ export default async function handler(req, res) {
         return res.status(400).json({ errors: errs });
       }
 
-      response = await Habits.add(req.body);
+      response = await Habits.add(req.query, req.body);
 
       if (response.error) return res.status(400).json(response);
       return res.status(200).json(response);
 
-    
-    
     case "DELETE":
       validator = jsonschema.validate(req.body, habitDeleteSchema);
 

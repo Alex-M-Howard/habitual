@@ -2,7 +2,6 @@ import { authenticateJWT, ensureLoggedIn } from "@/middleware/auth";
 import User from "@/models/user";
 
 const jsonschema = require("jsonschema");
-const trackerGetSchema = require("@/models/schemas/trackerGet.json");
 const trackerPostSchema = require("@/models/schemas/trackerPost.json");
 
 export default async function handler(req, res) {
@@ -21,14 +20,7 @@ export default async function handler(req, res) {
   // Request Method Switch
   switch (req.method) {
     case "GET":
-      validator = jsonschema.validate(req.body, trackerGetSchema);
-
-      if (!validator.valid) {
-        const errs = validator.errors.map((error) => error.stack);
-        return res.status(400).json({ errors: errs });
-      }
-
-      response = await User.getUserLog(req.body);
+      response = await User.getUserLog(parseInt(req.query.userId));
 
       if (response.error) return res.status(400).json(response);
       return res.status(200).json(response);
@@ -41,7 +33,10 @@ export default async function handler(req, res) {
         return res.status(400).json({ errors: errs });
       }
 
-      response = await User.logUserHabit(req.body);
+      response = await User.logUserHabit({
+        userId: parseInt(req.query.userId),
+        ...req.body,
+      });
 
       if (response.error) return res.status(400).json(response);
       return res.status(200).json(response);

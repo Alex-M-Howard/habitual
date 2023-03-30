@@ -89,10 +89,10 @@ class User {
 
   /**
    *
-   * @param {string} email
    * @returns {user: {id, firstName, lastName, email, dateJoined, habits: []}}
+   * @param userId
    */
-  static async get(email) {
+  static async get(userId) {
     const userRes = await db.query(
       `SELECT 
         id,
@@ -102,9 +102,9 @@ class User {
         email,
         date_joined AS "dateJoined"
       FROM users
-      WHERE email = $1
+      WHERE id = $1
       `,
-      [email]
+      [userId]
     );
 
     const user = userRes.rows[0];
@@ -181,18 +181,16 @@ class User {
    * @param {int} id
    * @returns {habits: []}
    */
-  static async getUserHabits(id) {
+  static async getUserHabits(userId) {
     const userHabits = await db.query(
       `SELECT 
       habits.name AS "habitName",
-      frequency,
-      streak,
-      longest_streak AS "longestStreak"
+      frequency
       FROM user_habits
       JOIN habits ON habits.id=habit_id
       WHERE user_id=$1
       `,
-      [id]
+      [userId]
     );
 
     let habits = userHabits.rows;
@@ -228,9 +226,7 @@ class User {
        RETURNING
         user_id AS "userID",
         habit_id AS "habitID",
-        frequency,
-        streak,
-        longest_streak AS "longestStreak"
+        frequency
       `,
       [userId, habitId, frequency]
     );
@@ -241,7 +237,7 @@ class User {
   /**
    *  Get user habit log
    */
-  static async getUserLog({ userId }) {
+  static async getUserLog(userId) {
     const existanceCheck = await db.query(
       `
       SELECT * FROM users WHERE id=$1`,
