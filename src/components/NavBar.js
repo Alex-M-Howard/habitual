@@ -28,16 +28,15 @@ function NavBar(props) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [navItems, setNavItems] = useState([]);
   const router = useRouter();
-  const user = useSelector((store) => store.user.loggedIn);
-
+  const user = useSelector((store) => store.user.loggedIn.user) || null;
   const theme = useTheme();
 
   const drawerWidth = 240;
 
   useEffect(() => {
     setNavItems(
-      user.user
-        ? ["Login", "Signup", "Profile", "Habits", "Info", "Logout"]
+      user
+        ? ["Login", "Signup", "Profile", "Habits", "Info", "Logout", "Journals"]
         : ["Login", "Signup"]
     );
   }, [user]);
