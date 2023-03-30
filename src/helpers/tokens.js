@@ -5,10 +5,11 @@ const { SECRET_KEY } = require("../config/db");
 
 function createToken(user) {
   let payload = {
+    id: user.id,
     email: user.email,
     firstName: user.firstName,
     lastName: user.lastName,
-    dateJoined: user.dateJoined
+    dateJoined: user.dateJoined,
   };
 
   return jwt.sign(payload, SECRET_KEY);
