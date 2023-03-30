@@ -1,13 +1,13 @@
 // General Imports
-import {useState, useEffect} from "react";
+import {useEffect, useState} from "react";
 import {CacheProvider} from "@emotion/react";
 import createEmotionCache from "@/config/createEmotionCache";
 import rootReducer from "@/redux/rootReducer.js";
-import {Provider, useSelector} from "react-redux";
+import {Provider} from "react-redux";
 import {configureStore} from "@reduxjs/toolkit";
 import {darkTheme, lightTheme} from "@/config/theme";
-import {useScrollTrigger} from "@mui/material";
-
+import {NoSsr} from "@mui/material";
+import UserAuth from "@/components/UserAuth";
 
 // MaterialUI Imports
 import {ThemeProvider} from "@mui/material/styles";
@@ -19,7 +19,6 @@ import "@fontsource/roboto/700.css";
 
 // Component Imports
 import NavBar from "@/components/NavBar";
-import {NoSsr} from "@mui/material";
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -29,7 +28,7 @@ const store = configureStore({
 });
 
 function ThemeWrapper({ children }) {
-  const [theme, setTheme] = useState( null );
+  const [theme, setTheme] = useState(null);
 
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
@@ -38,7 +37,7 @@ function ThemeWrapper({ children }) {
     } else {
       setTheme(lightTheme);
     }
-  } , []);
+  }, []);
 
   const toggleTheme = () => {
     setTheme((currentTheme) =>
@@ -77,15 +76,15 @@ function ThemeWrapper({ children }) {
   );
 }
 
-
 export default function MyApp(props) {
-  const {Component, emotionCache = clientSideEmotionCache, pageProps} = props;
+  const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
 
   return (
     <CacheProvider value={emotionCache}>
       <Provider store={store}>
-        <CssBaseline/>
+        <CssBaseline />
         <ThemeWrapper>
+          <UserAuth />
           <Component {...pageProps} />
         </ThemeWrapper>
       </Provider>
