@@ -7,6 +7,7 @@ function Journals() {
 
   if (!user) return null;
 
+  //TODO useEffect
   async function getJournals() {
     const username = user.email.split("@")[0];
     const res = await axios({
