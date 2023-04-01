@@ -28,8 +28,14 @@ function NavBar(props) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [navItems, setNavItems] = useState([]);
   const router = useRouter();
-  const user = useSelector((store) => store.user.loggedIn.user) || null;
+  let user = useSelector((store) => store.user.loggedIn)
   const theme = useTheme();
+
+  try {
+    user = user.user;
+  } catch (err) {
+    user = null;
+  }
 
   const drawerWidth = 240;
 
