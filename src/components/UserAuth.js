@@ -16,7 +16,7 @@ function UserAuth() {
         router.push("/login");
       } else {
         dispatch({
-          type: "SET_USER",
+          type: "LOGIN",
           payload: JSON.parse(localStorage.getItem("user")),
         });
       }
