@@ -14,16 +14,12 @@ function Profile() {
 
   let changes = null;
 
-  if (!user) {
-    if (!user) return null;
-  }
-
   const fields = [
     { name: "firstName", label: "First Name" },
     { name: "lastName", label: "Last Name" },
     { name: "email", label: "Email" },
   ];
-
+  console.log(user);
   const initialValues = {
     firstName: user.firstName,
     lastName: user.lastName,
@@ -32,16 +28,20 @@ function Profile() {
 
   console.log(user);
   const handleSubmit = async (formData) => {
+    console.log(formData);
     if (error) setError(null);
 
-    let username = formData.email.split("@")[0];
     try {
-      let res = await axios.put(`/api/users/${username}`, formData, {
+      let res = await axios.put(`/api/users/${user.id}`, formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       // TODO - update user in redux store
       // TODO - update user in local storage
       // TODO - Fix error message to be a success message
+      // user.firstName = formData.firstName;
+      // user.lastName = formData.lastName;
+      // user.email = formData.email;
+
       setError("Profile Updated");
       hide(1);
     } catch (error) {
