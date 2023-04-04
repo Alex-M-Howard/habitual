@@ -10,9 +10,9 @@ const DBPORT = process.env.PGPORT;
 
 // Use dev database, testing database, or via env var, production database
 function getDatabaseUri() {
-  return (process.env.NODE_ENV === "test")
-      ? "habitual_test"
-      : process.env.PGDATABASE;
+  return process.env.NODE_ENV === "test"
+    ? "habitual_test"
+    : process.env.PGDATABASE;
 }
 
 let db;
@@ -32,10 +32,10 @@ if (process.env.NODE_ENV === "production") {
   });
 } else {
   db = new Client({
-    connectionString
+    connectionString,
   });
 }
-
+console.log(connectionString);
 console.log("Jobly Config: ");
 console.log("BCRYPT_WORK_FACTOR: ", BCRYPT_WORK_FACTOR);
 console.log("Database: ", dbUri);
@@ -46,5 +46,6 @@ db.connect();
 module.exports = {
   db,
   BCRYPT_WORK_FACTOR,
-  SECRET_KEY
+  SECRET_KEY,
+  connectionString,
 };
