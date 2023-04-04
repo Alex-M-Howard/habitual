@@ -35,7 +35,7 @@ if (process.env.NODE_ENV === "production") {
     connectionString,
   });
 }
-console.log(connectionString);
+
 console.log("Jobly Config: ");
 console.log("BCRYPT_WORK_FACTOR: ", BCRYPT_WORK_FACTOR);
 console.log("Database: ", dbUri);
@@ -47,5 +47,4 @@ module.exports = {
   db,
   BCRYPT_WORK_FACTOR,
   SECRET_KEY,
-  connectionString,
 };
