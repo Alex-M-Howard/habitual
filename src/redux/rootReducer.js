@@ -5,21 +5,22 @@ const INITIAL_USER_STATE = { loggedIn: {} };
 
 function userReducer(state = INITIAL_USER_STATE, action) {
   switch (action.type) {
-    case "SET_USER":
+    case "LOGIN":
       return { ...state, loggedIn: { ...action.payload } };
 
-    case "LOGIN":
-      // Save user to local storage
+    case "SAVE_TO_LOCALSTORAGE":
       if (typeof window !== "undefined") {
         localStorage.setItem("user", JSON.stringify(action.payload));
       }
-      return { ...state, loggedIn: { ...action.payload } };
+      return state;
 
-    case "LOGOUT":
-      // Remove user from local storage
+    case "REMOVE_FROM_LOCALSTORAGE":
       if (typeof window !== "undefined") {
         localStorage.removeItem("user");
       }
+      return state;
+
+    case "LOGOUT":
       return { ...state, loggedIn: null };
 
     default:
