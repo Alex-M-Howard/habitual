@@ -26,7 +26,7 @@ email VARCHAR(255)
 
 CREATE TABLE habits (
 id SERIAL PRIMARY KEY,
-name VARCHAR(255),
+name VARCHAR(255) NOT NULL,
 do_not_delete BOOLEAN DEFAULT false
 );
 
@@ -52,7 +52,7 @@ do_not_delete BOOLEAN DEFAULT false
 CREATE TABLE user_habits (
 user_id INTEGER REFERENCES users(id),
 habit_id INTEGER REFERENCES habits(id),
-frequency INTEGER,
+frequency INTEGER
 );
 
 CREATE TABLE days (
