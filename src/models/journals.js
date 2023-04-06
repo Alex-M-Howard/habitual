@@ -10,16 +10,17 @@ class Journals {
    * Returns {journals: [{ id, date, entry }, ...]}
    **/
 
-  static async getJournals({ id }) {
+  static async getJournals({ userId }) {
     const result = await db.query(
       `SELECT 
         id,
+        user_id AS "userId",
         date,
         entry
       FROM journals
       WHERE user_id=$1
       ORDER BY date`,
-      [id]
+      [userId]
     );
 
     return { journals: result.rows };
@@ -72,6 +73,36 @@ class Journals {
     }
 
     return { response: `Journal: ID-${id} successfully deleted.` };
+  }
+
+  static async update({ journalId, userId, entry }) {
+    const existingJournal = await db.query(
+      `SELECT
+        *
+     FROM journals WHERE id = $1 AND user_id = $2`,
+      [journalId, userId]
+    );
+
+    if (existingJournal.rows.length < 1) {
+      return { error: "Journal not found. No operation completed." };
+    }
+
+    let result = await db.query(
+      `UPDATE journals
+         SET entry = $3
+         WHERE id = $1 AND user_id = $2
+         RETURNING id, date, entry`,
+      [journalId, userId, entry]
+    );
+    const journal = result.rows[0];
+
+    if (!journal) {
+      return {
+        error: `Journal: ID-${journalId} not found. Update unsuccessful`,
+      };
+    }
+
+    return { response: `Journal: ID-${journalId} successfully updated.` };
   }
 }
 
