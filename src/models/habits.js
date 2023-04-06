@@ -24,10 +24,9 @@ class Habits {
     return { habits: result.rows };
   }
 
-
   /**
-   * 
-   * @param {name} Adds a new habit 
+   *
+   * @param {name} Adds a new habit
    * @returns {habits: {id, name}}
    */
   static async add({ name }) {
@@ -38,7 +37,7 @@ class Habits {
 
     if (existingHabit.rows.length > 0) {
       // A habit with this name already exists in the database
-      return { error: 'Habit already exists.' };
+      return { error: "Habit already exists." };
     }
 
     const result = await db.query(
@@ -56,14 +55,14 @@ class Habits {
    * Also has to check if other users are using habit (In case of duplicate adds)
    */
 
-  static async remove({id}) {
+  static async remove({ habitId }) {
     const existingHabit = await db.query(
       `SELECT
           id,
           name,
           do_not_delete AS "doNotDelete" 
        FROM habits WHERE id = $1`,
-      [id]
+      [habitId]
     );
 
     if (existingHabit.rows.length < 1) {
@@ -80,28 +79,28 @@ class Habits {
           habit_id AS "habitId"
        FROM user_habits
        WHERE habit_id = $1`,
-      [id]
+      [habitId]
     );
 
     if (userHabits.rows.length > 0) {
       return { error: "Habit still in use by user. No operation completed." };
     }
 
-
     let result = await db.query(
       `DELETE
            FROM habits
            WHERE id = $1
            RETURNING id`,
-      [id]
+      [habitId]
     );
     const habit = result.rows[0];
 
     if (!habit) {
-      return {error: `Habit: ID-${id} not found. Delete unsuccessful`}
+      return { error: `Habit: ID-${habitId} not found. Delete unsuccessful` };
     }
 
-    return { response: `Habit: ID-${id} successfully deleted.` };
+    return { response: `Habit: ID-${habitId} successfully deleted.` };
   }
 }
+
 module.exports = Habits;
