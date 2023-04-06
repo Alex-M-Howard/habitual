@@ -41,9 +41,7 @@ function NavBar(props) {
 
   useEffect(() => {
     setNavItems(
-      user
-        ? ["Login", "Signup", "Profile", "Habits", "Info", "Logout", "Journals"]
-        : ["Login", "Signup"]
+      user ? ["Habits", "Insights", "Journals", "Profile", "Logout"] : ["Login"]
     );
   }, [user]);
 
