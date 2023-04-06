@@ -13,6 +13,7 @@ const jwt = require("jsonwebtoken");
  */
 
 function authenticateJWT(token) {
+  console.log(token)
   token = token.replace(/^[Bb]earer /, "").trim();
   const user = jwt.verify(token, process.env.NEXTAUTH_SECRET);
   return user;
@@ -24,6 +25,8 @@ function authenticateJWT(token) {
  */
 
 function ensureLoggedIn(req) {
+  console.log(req)
+
   let token = req.rawHeaders[req.rawHeaders.indexOf("Authorization") + 1];
   return token;
 }
