@@ -25,8 +25,15 @@ function authenticateJWT(token) {
  */
 
 function ensureLoggedIn(req) {
+  let token;
 
-  let token = req.rawHeaders[req.rawHeaders.indexOf("authorization") + 1];
+  for (let i = 0; i < req.rawHeaders.length - 1; i++){
+    if (req.rawHeaders[i].toLowerCase() === "authorization") {
+      token = req.rawHeaders[i + 1];
+      break;
+    }
+  }
+
   return token;
 }
 
