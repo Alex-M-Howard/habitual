@@ -1,14 +1,15 @@
-import * as React from "react";
-import { useEffect } from "react";
-import ListSubheader from "@mui/material/ListSubheader";
-import List from "@mui/material/List";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
-import Collapse from "@mui/material/Collapse";
+import { useEffect, useState } from "react";
+import {
+  Collapse,
+  List,
+  ListItemButton,
+  ListItemText,
+  ListSubheader,
+  TextField,
+} from "@mui/material";
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import { ExpandLess, ExpandMore } from "@mui/icons-material";
-import { TextField } from "@mui/material";
 import uuid4 from "uuid4";
 
 function NestedList({
@@ -18,21 +19,16 @@ function NestedList({
   customHabit,
   setCustomHabit,
 }) {
-  const [open, setOpen] = React.useState({});
-  const [categories, setCategories] = React.useState([]);
-  const [selectedHabitId, setSelectedHabitId] = React.useState(null);
+  const [open, setOpen] = useState({});
+  const [categories, setCategories] = useState([]);
+  const [selectedHabitId, setSelectedHabitId] = useState(null);
   const { user, token } = useSelector((store) => store.user.loggedIn);
 
   useEffect(() => {
     async function getCategories() {
-      const res = await axios({
-        method: "GET",
-        url: `/api/habits/categories`,
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const url = `/api/habits/categories`;
+      const headers = { Authorization: `Bearer ${token}` };
+      const res = await axios.get(url, { headers });
       return res.data.categories;
     }
 
@@ -68,7 +64,12 @@ function NestedList({
             const isSelected = selectedHabitId === habit.habitId;
             if (userHabitIds.includes(habit.habitId)) {
               return (
-                <Collapse in={open[category.id]} timeout="auto" unmountOnExit>
+                <Collapse
+                  in={open[category.id]}
+                  timeout="auto"
+                  unmountOnExit
+                  key={uuid4()}
+                >
                   <List component="div" disablePadding key={uuid4()}>
                     <ListItemButton sx={{ pl: 4 }} disabled={true}>
                       <ListItemText primary={habit.habitName} />
@@ -78,7 +79,12 @@ function NestedList({
               );
             } else {
               return (
-                <Collapse in={open[category.id]} timeout="auto" unmountOnExit>
+                <Collapse
+                  in={open[category.id]}
+                  timeout="auto"
+                  unmountOnExit
+                  key={uuid4()}
+                >
                   <List component="div" disablePadding key={uuid4()}>
                     <ListItemButton
                       sx={{
