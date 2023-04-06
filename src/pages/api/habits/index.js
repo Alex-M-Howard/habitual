@@ -32,7 +32,7 @@ export default async function handler(req, res) {
         return res.status(400).json({ errors: errs });
       }
 
-      response = await Habits.add(req.query, req.body);
+      response = await Habits.add(req.body);
 
       if (response.error) return res.status(400).json(response);
       return res.status(200).json(response);
