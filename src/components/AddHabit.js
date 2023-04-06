@@ -29,7 +29,6 @@ function AddHabit({
     const headers = { Authorization: `Bearer ${token}` };
 
     const response = await axios.post(url, data, { headers });
-    console.log(response);
     if (response.status === 200) {
       const habitId = response.data[0].habitId;
       const habitName = customHabit;
@@ -50,8 +49,8 @@ function AddHabit({
     const res = await axios.post(url, data, { headers });
 
     if (res.status === 200) {
-      await addHabitToUser(res.data.habit.id);
-      await addHabitToOther(res.data.habit.id);
+      await addHabitToUser(res.data.habits.id);
+      await addHabitToOther(res.data.habits.id);
       setAddShowing(false);
     } else {
       // TODO - Handle error
@@ -90,8 +89,9 @@ function AddHabit({
       direction="column"
       justifyContent="center"
       alignItems="center"
+      sx={{ mt: 3 }}
     >
-      <Typography variant="h1">Add Habit</Typography>
+      <Typography variant="h4">Add Habit</Typography>
       <NestedList
         userHabits={userHabits}
         habitCategories={categories}
@@ -100,6 +100,7 @@ function AddHabit({
         setCustomHabit={setCustomHabit}
       />
       <Button onClick={handleAdd}>Add Habit</Button>
+      <Button onClick={() => setAddShowing(false)}>Cancel</Button>
     </Grid>
   );
 }
