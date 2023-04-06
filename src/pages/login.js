@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import useMessageTimer from "@/hooks/useAlerts";
 import { useTheme } from "@mui/material/styles";
+import Link from "next/link";
 
 function Login() {
   const [error, setError] = useState(null);
@@ -34,6 +35,7 @@ function Login() {
       await router.push("/");
     } catch (error) {
       // TODO Remove Hardcoded error
+      console.log(error)
       setError("Email/Password is incorrect.");
       hide(1);
     }
@@ -44,24 +46,21 @@ function Login() {
       container
       direction="column"
       justifyContent="center"
-      alignItems="center"
-    >
+      alignItems="center">
       <div
         style={{
           height: "150px",
           overflow: "hidden",
           opacity: hidden ? 1 : 0,
           transition: "opacity 0.3s ease-in-out",
-        }}
-      >
+        }}>
         <Alert
           sx={{
             m: 2,
             width: "350px",
             backgroundColor: `${theme.palette.error.background}`,
           }}
-          severity="error"
-        >
+          severity="error">
           <AlertTitle>Error</AlertTitle>
           {error}
         </Alert>
@@ -69,8 +68,7 @@ function Login() {
       <Typography
         align="center"
         variant="h3"
-        sx={{ mt: 5, color: `${theme.palette.text.main}` }}
-      >
+        sx={{ mt: 5, color: `${theme.palette.text.main}` }}>
         Login
       </Typography>
 
@@ -80,6 +78,18 @@ function Login() {
         handleSubmit={handleSubmit}
         buttonText="Login"
       />
+      <Typography
+        align="center"
+        variant="subtitle1"
+        sx={{ mt: 1, color: `${theme.palette.text.secondary}` }}>
+        New user?{" "}
+        <Link
+          href="/signup"
+          underline="hover"
+          color={`${theme.palette.text.main}`}>
+          Sign up
+        </Link>
+      </Typography>
     </Grid>
   );
 }

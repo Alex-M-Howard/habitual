@@ -6,6 +6,7 @@ import { Alert, AlertTitle, Grid, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import useMessageTimer from "@/hooks/useAlerts";
 import { useTheme } from "@mui/material/styles";
+import Link from "next/link";
 
 function Signup() {
   const [error, setError] = useState(null);
@@ -46,24 +47,21 @@ function Signup() {
       container
       direction="column"
       justifyContent="center"
-      alignItems="center"
-    >
+      alignItems="center">
       <div
         style={{
           height: "150px",
           overflow: "hidden",
           opacity: hidden ? 1 : 0,
           transition: "opacity 0.3s ease-in-out",
-        }}
-      >
+        }}>
         <Alert
           sx={{
             m: 2,
             width: "350px",
             backgroundColor: `${theme.palette.error.background}`,
           }}
-          severity="error"
-        >
+          severity="error">
           <AlertTitle>Error</AlertTitle>
           {error}
         </Alert>
@@ -71,8 +69,7 @@ function Signup() {
       <Typography
         align="center"
         variant="h3"
-        sx={{ mt: 5, color: `${theme.palette.text.main}` }}
-      >
+        sx={{ mt: 5, color: `${theme.palette.text.main}` }}>
         Signup
       </Typography>
 
@@ -82,6 +79,18 @@ function Signup() {
         handleSubmit={handleSubmit}
         buttonText="Sign Up"
       />
+      <Typography
+        align="center"
+        variant="subtitle1"
+        sx={{ mt: 1, color: `${theme.palette.text.secondary}` }}>
+        Already a user?{" "}
+        <Link
+          href="/login"
+          underline="hover"
+          color={`${theme.palette.text.main}`}>
+          Login
+        </Link>
+      </Typography>
     </Grid>
   );
 }
