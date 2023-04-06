@@ -27,7 +27,7 @@ function authenticateJWT(token) {
 function ensureLoggedIn(req) {
   console.log(req)
 
-  let token = req.rawHeaders[req.rawHeaders.indexOf("Authorization") + 1];
+  let token = req.rawHeaders[req.rawHeaders.indexOf("authorization") + 1];
   return token;
 }
 
