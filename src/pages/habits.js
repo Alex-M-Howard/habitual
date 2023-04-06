@@ -38,9 +38,31 @@ function Habits() {
   function getHabits() {
     return userHabits.map((habit) => {
       return (
-        <div key={uuid4()}>
-          <h2>{habit.habitName}</h2>
-        </div>
+        <Grid
+          container
+          key={uuid4()}
+          alignItems="center"
+          justifyContent="flex-start"
+        >
+          {editMode && (
+            <Grid item>
+              <button
+                style={{
+                  backgroundColor: "rgba(0,0,0,0)",
+                  border: "none",
+                  fontWeight: "bold",
+                  fontSize: "1.5rem",
+                }}
+                onClick={() => handleRemoveHabit(habit.habitId)}
+              >
+                X
+              </button>
+            </Grid>
+          )}
+          <Grid item>
+            <h2>{habit.habitName}</h2>
+          </Grid>
+        </Grid>
       );
     });
   }
