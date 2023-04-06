@@ -100,9 +100,30 @@ function Habits() {
       >
         <Typography variant="h4">Habits</Typography>
 
-        <Button onClick={handleClick}>Add habit</Button>
+        <Grid container justifyContent="center" alignItems="center" spacing={2}>
+          <Grid item>
+            <Button onClick={handleClick}>Add habit</Button>
+          </Grid>
+          <Grid item>
+            <Button onClick={() => setEditMode(!editMode)}>
+              {editMode ? "Done" : "Edit"}
+            </Button>
+          </Grid>
+        </Grid>
 
-        {getHabits()}
+        <Grid
+          container
+          direction="column"
+          alignItems="center"
+          justifyContent="center"
+          sx={{ width: "100%" }}
+        >
+          <Grid item></Grid>
+          <Grid item xs={6} sm={4}>
+            {getHabits()}
+          </Grid>
+          <Grid item></Grid>
+        </Grid>
       </Grid>
     );
   }
