@@ -7,16 +7,25 @@ function Logout() {
   const router = useRouter();
   const user = useSelector((store) => store.user.loggedIn);
 
-  // Logout function due to React error when using dispatch AND router.push
-  dispatch({ type: "REMOVE_FROM_LOCALSTORAGE" });
-  const logout = () => dispatch({ type: "LOGOUT" });
-  logout();
+  useEffect(() => {
+    // Logout function due to React error when using dispatch AND router.push. Had to add to useEffect
+    // due to multiple components rendering (Navbar and logout at same time)
+    dispatch({ type: "REMOVE_FROM_LOCALSTORAGE" });
+    const logout = () => dispatch({ type: "LOGOUT" });
+    logout();
+  }, [dispatch]);
 
   useEffect(() => {
-    if (!user) {
-      router.push("/login");
-    }
-  }, [user]);
+    const redirectToLogin = async () => {
+      if (!user) {
+        await router.push("/login");
+      }
+    };
+
+    redirectToLogin();
+  }, [user, router]);
+
+  return null;
 }
 
 export default Logout;
