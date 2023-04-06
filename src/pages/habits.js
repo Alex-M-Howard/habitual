@@ -14,16 +14,17 @@ function Habits() {
   const [customHabit, setCustomHabit] = useState("");
   const [categories, setCategories] = useState([]);
   const [addShowing, setAddShowing] = useState(false);
+  const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
-    async function getHabits() {
+    async function fetchHabits() {
       const url = `/api/users/${user.id}/habits`;
       const headers = { Authorization: `Bearer ${token}` };
       const res = await axios.get(url, { headers });
       return res.data.habits;
     }
 
-    async function getCategories() {
+    async function fetchCategories() {
       const url = `/api/habit_categories`;
       const headers = { Authorization: `Bearer ${token}` };
       const res = await axios.get(url, { headers });
@@ -31,8 +32,8 @@ function Habits() {
     }
 
     if (!user) return;
-    getHabits().then((data) => setUserHabits(data));
-    getCategories().then((data) => setCategories(data));
+    fetchHabits().then((data) => setUserHabits(data));
+    fetchCategories().then((data) => setCategories(data));
   }, [user]);
 
   function getHabits() {
@@ -67,10 +68,42 @@ function Habits() {
     });
   }
 
+  async function removeHabitFromDB(habitId) {
+    let url, data, headers;
+
+    if (habitId > 23) {
+      url = `/api/habit_categories/`;
+      data = { habitId, categoryId: 10 };
+      headers = { Authorization: `Bearer ${token}` };
+      await axios.delete(url, { data, headers });
+    }
+
+    url = `/api/habits`;
+    headers = { Authorization: `Bearer ${token}` };
+    data = { habitId };
+    await axios.delete(url, { data, headers });
+  }
+
+  async function removeHabitFromUserHabits(habitId) {
+    let url = `/api/users/${user.id}/habits`;
+    let headers = { Authorization: `Bearer ${token}` };
+    let data = { habitId };
+    await axios.delete(url, { data, headers });
+    setUserHabits(userHabits.filter((habit) => habit.habitId !== habitId));
+  }
+
+  // async function removeHabitFromCategory(habitId)
+
   if (!userHabits) return <div>Loading...</div>;
 
   const handleClick = () => {
+    setEditMode(false);
     setAddShowing(true);
+  };
+
+  const handleRemoveHabit = async (habitId) => {
+    await removeHabitFromUserHabits(habitId);
+    await removeHabitFromDB(habitId);
   };
 
   const handleHabitSelect = (habitName) => {
