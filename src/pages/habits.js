@@ -1,9 +1,12 @@
+// External Package Imports
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import { Button } from "@mui/material";
-import AddHabit from "@/components/AddHabit";
+import { Button, Grid, Typography } from "@mui/material";
 import uuid4 from "uuid4";
+
+// Internal Imports
+import AddHabit from "@/components/AddHabit";
 
 function Habits() {
   const { user, token } = useSelector((store) => store.user.loggedIn);
@@ -52,7 +55,6 @@ function Habits() {
     setCustomHabit(habitName);
   };
 
-  console.log(userHabits);
   if (addShowing) {
     return (
       <AddHabit
@@ -67,12 +69,19 @@ function Habits() {
     );
   } else {
     return (
-      <div>
-        <h1>Habits</h1>
+      <Grid
+        container
+        direction="column"
+        justifyContent="center"
+        alignItems="center"
+        sx={{ mt: 3 }}
+      >
+        <Typography variant="h4">Habits</Typography>
+
         <Button onClick={handleClick}>Add habit</Button>
 
         {getHabits()}
-      </div>
+      </Grid>
     );
   }
 }
