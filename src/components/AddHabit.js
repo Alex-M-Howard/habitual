@@ -1,17 +1,87 @@
 import React from "react";
-import Form from "@/components/Form";
-import { Grid, Typography } from "@mui/material";
+import { Button, Grid, Typography } from "@mui/material";
 import NestedList from "@/components/NestedList";
+import { useSelector } from "react-redux";
+import { useRouter } from "next/router";
+import axios from "axios";
 
-function AddHabit({ habits, categories }) {
+const OTHER_CATEGORY_ID = 10;
+
+function AddHabit({
+  userHabits,
+  categories,
+  onHabitSelect,
+  customHabit,
+  setCustomHabit,
+  setAddShowing,
+  setUserHabits,
+}) {
+  const { user, token } = useSelector((store) => store.user.loggedIn);
+  const router = useRouter();
   const fields = [{ name: "name", label: "Name" }];
-
   const initialValues = {
     name: "",
   };
 
-  const handleSubmit = async (formData) => {
-    console.log(formData);
+  const addHabitToUser = async (habitId) => {
+    const data = { habitId, frequency: 1 };
+    const url = `/api/users/${user.id}/habits`;
+    const headers = { Authorization: `Bearer ${token}` };
+
+    const response = await axios.post(url, data, { headers });
+    console.log(response);
+    if (response.status === 200) {
+      const habitId = response.data[0].habitId;
+      const habitName = customHabit;
+
+      setUserHabits([...userHabits, { habitId, habitName, frequency: 1 }]);
+      setAddShowing(false);
+    } else {
+      // TODO - Handle error
+      console.log("Error");
+    }
+  };
+
+  const addHabitToDB = async (habit) => {
+    const data = habit;
+    const url = `/api/habits`;
+    const headers = { Authorization: `Bearer ${token}` };
+
+    const res = await axios.post(url, data, { headers });
+
+    if (res.status === 200) {
+      await addHabitToUser(res.data.habit.id);
+      await addHabitToOther(res.data.habit.id);
+      setAddShowing(false);
+    } else {
+      // TODO - Handle error
+      console.log("Error");
+    }
+  };
+
+  const addHabitToOther = async (habitId) => {
+    const data = { habitId, categoryId: OTHER_CATEGORY_ID };
+    const url = `/api/habit_categories`;
+    const headers = { Authorization: `Bearer ${token}` };
+    const res = await axios.post(url, data, { headers });
+
+    if (res.status === 200) return;
+    // TODO - Handle error
+    console.log("Error");
+  };
+
+  const handleAdd = async () => {
+    if (customHabit === "") return;
+
+    const habitId = categories.find(
+      (category) => category.habitName === customHabit
+    )?.habitId;
+
+    if (habitId) {
+      await addHabitToUser(habitId);
+    } else {
+      await addHabitToDB({ name: customHabit });
+    }
   };
 
   return (
@@ -22,13 +92,14 @@ function AddHabit({ habits, categories }) {
       alignItems="center"
     >
       <Typography variant="h1">Add Habit</Typography>
-      <NestedList habits={habits} habitCategories={categories} />
-      <Form
-        fields={fields}
-        initialValues={initialValues}
-        handleSubmit={handleSubmit}
-        buttonText={"Add Habit"}
+      <NestedList
+        userHabits={userHabits}
+        habitCategories={categories}
+        onHabitSelect={onHabitSelect}
+        customHabit={customHabit}
+        setCustomHabit={setCustomHabit}
       />
+      <Button onClick={handleAdd}>Add Habit</Button>
     </Grid>
   );
 }
