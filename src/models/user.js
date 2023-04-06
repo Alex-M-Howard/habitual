@@ -184,6 +184,7 @@ class User {
   static async getUserHabits(userId) {
     const userHabits = await db.query(
       `SELECT 
+      habit_id AS "habitId",
       habits.name AS "habitName",
       frequency
       FROM user_habits
