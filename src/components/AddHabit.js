@@ -15,6 +15,7 @@ function AddHabit({
   setCustomHabit,
   setAddShowing,
   setUserHabits,
+  setEditMode,
 }) {
   const { user, token } = useSelector((store) => store.user.loggedIn);
   const router = useRouter();
