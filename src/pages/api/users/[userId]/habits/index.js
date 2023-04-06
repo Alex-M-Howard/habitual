@@ -55,7 +55,10 @@ export default async function handler(req, res) {
         return res.status(400).json({ errors: errs });
       }
 
-      response = await User.removeUserHabit(req.body);
+      let habitId = parseInt(req.body.habitId);
+      let userId = parseInt(req.query.userId);
+
+      response = await User.removeUserHabit({ habitId, userId });
       return res.status(200).json(response);
 
     default:

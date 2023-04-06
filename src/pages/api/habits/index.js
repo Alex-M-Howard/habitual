@@ -39,7 +39,6 @@ export default async function handler(req, res) {
 
     case "DELETE":
       validator = jsonschema.validate(req.body, habitDeleteSchema);
-
       if (!validator.valid) {
         const errs = validator.errors.map((error) => error.stack);
         return res.status(400).json({ errors: errs });

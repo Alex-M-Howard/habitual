@@ -19,16 +19,13 @@ function Profile() {
     { name: "lastName", label: "Last Name" },
     { name: "email", label: "Email" },
   ];
-  console.log(user);
   const initialValues = {
     firstName: user.firstName,
     lastName: user.lastName,
     email: user.email,
   };
 
-  console.log(user);
   const handleSubmit = async (formData) => {
-    console.log(formData);
     if (error) setError(null);
 
     try {
