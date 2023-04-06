@@ -140,7 +140,7 @@ function NestedList({
         selected={selectedHabitId === "other"}
         onClick={handleOtherCategoryClick}
       >
-        <ListItemText primary="Other" />
+        <ListItemText primary="Create New Habit" />
       </ListItemButton>
       {selectedHabitId === "other" && (
         <TextField
@@ -149,7 +149,7 @@ function NestedList({
           size="small"
           value={customHabit}
           onChange={(e) => setCustomHabit(e.target.value)}
-          sx={{ mt: 2, mb: 2 }}
+          sx={{ mt: 2, mb: 2, width: "100%" }}
         />
       )}
     </List>
