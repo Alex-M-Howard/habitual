@@ -13,7 +13,6 @@ const jwt = require("jsonwebtoken");
  */
 
 function authenticateJWT(token) {
-  console.log(token)
   token = token.replace(/^[Bb]earer /, "").trim();
   const user = jwt.verify(token, process.env.NEXTAUTH_SECRET);
   return user;

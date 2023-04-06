@@ -81,7 +81,6 @@ function Journals() {
     const data = { entry: editedEntry, journalId: selectedJournal.id };
     await axios.put(url, data, { headers });
 
-    // Update the local state to reflect the changes
     const updatedJournals = journals.map((journal) =>
       journal.id === selectedJournal.id
         ? { ...selectedJournal, entry: editedEntry }
@@ -98,9 +97,8 @@ function Journals() {
     const headers = { Authorization: `Bearer ${token}` };
     const data = { entry: "" };
     const res = await axios.post(url, data, { headers });
-    console.log(res);
-    // Update the local state to reflect the changes
     const newJournal = res.data.journals;
+
     setJournals([newJournal, ...journals]);
     setSelectedJournal(newJournal);
     setIsEditing(true);
