@@ -251,9 +251,43 @@ class User {
 
     const userLog = await db.query(
       `
-      SELECT *
+      SELECT id,
+      user_id AS "userId",  
+      habit_id AS "habitId",
+      day_date AS "date",
+      day_id AS "dayId"  
       FROM tracker
       WHERE user_id=$1`,
+      [userId]
+    );
+
+    return { log: userLog.rows };
+  }
+
+  /**
+   *  Get user habit log
+   */
+  static async getUserLogToday(userId) {
+    const existanceCheck = await db.query(
+      `
+      SELECT * FROM users WHERE id=$1`,
+      [userId]
+    );
+
+    if (existanceCheck.rows.length < 1) {
+      return { error: `User: ${userId} not found.` };
+    }
+
+    const userLog = await db.query(
+      `
+      SELECT 
+      id,
+      user_id AS "userId",  
+      habit_id AS "habitId",
+      day_date AS "date",
+      day_id AS "dayId"  
+      FROM tracker
+      WHERE user_id=$1 AND date(day_date)=date(NOW())`,
       [userId]
     );
 
@@ -323,6 +357,36 @@ class User {
     }
 
     return { response: response.rows };
+  }
+
+  /**
+   * Log user habit
+   *
+   */
+  static async removeLoggedUserHabit({ habitId, userId}) {
+    let response;
+
+    const existanceCheck = await db.query(
+      `
+      SELECT *
+      FROM tracker
+      WHERE habit_id=$1 AND user_id=$2 AND date(day_date)=date(NOW())
+      `,
+      [habitId, userId]
+    );
+
+    if (existanceCheck.rows.length < 1) {
+      return {
+        error: `Log: ${id} not found. No operation performed.`,
+      };
+    }
+    response = await db.query(
+      `
+        DELETE FROM tracker WHERE habit_id=$1 AND user_id=$2 AND date(day_date)=date(NOW())
+        RETURNING *`,
+      [habitId, userId]
+    );
+    return { response: response.rows, message: "Log successfully deleted" };
   }
 
   /**
