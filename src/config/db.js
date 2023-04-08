@@ -36,11 +36,6 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-console.log("Jobly Config: ");
-console.log("BCRYPT_WORK_FACTOR: ", BCRYPT_WORK_FACTOR);
-console.log("Database: ", dbUri);
-console.log("---");
-
 db.connect();
 
 module.exports = {
