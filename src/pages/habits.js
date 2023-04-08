@@ -2,15 +2,17 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import { Button, Grid, Typography } from "@mui/material";
+import { Button, Grid, Typography, ButtonGroup, Stack } from "@mui/material";
 import uuid4 from "uuid4";
 
 // Internal Imports
 import AddHabit from "@/components/AddHabit";
+import HabitList from "@/components/HabitList";
 
 function Habits() {
   const { user, token } = useSelector((store) => store.user.loggedIn);
   const [userHabits, setUserHabits] = useState([]);
+  const [habitLog, setHabitLog] = useState([]);
   const [customHabit, setCustomHabit] = useState("");
   const [categories, setCategories] = useState([]);
   const [addShowing, setAddShowing] = useState(false);
@@ -31,42 +33,18 @@ function Habits() {
       return res.data.habitCategories;
     }
 
+    async function fetchTodayHabitLog() {
+      const url = `/api/users/${user.id}/tracker/today`;
+      const headers = { Authorization: `Bearer ${token}` };
+      const res = await axios.get(url, { headers });
+      return res.data.log;
+    }
+
     if (!user) return;
     fetchHabits().then((data) => setUserHabits(data));
     fetchCategories().then((data) => setCategories(data));
+    fetchTodayHabitLog().then((data) => setHabitLog(data));
   }, [user]);
-
-  function getHabits() {
-    return userHabits.map((habit) => {
-      return (
-        <Grid
-          container
-          key={uuid4()}
-          alignItems="center"
-          justifyContent="flex-start"
-        >
-          {editMode && (
-            <Grid item>
-              <button
-                style={{
-                  backgroundColor: "rgba(0,0,0,0)",
-                  border: "none",
-                  fontWeight: "bold",
-                  fontSize: "1.5rem",
-                }}
-                onClick={() => handleRemoveHabit(habit.habitId)}
-              >
-                X
-              </button>
-            </Grid>
-          )}
-          <Grid item>
-            <h2>{habit.habitName}</h2>
-          </Grid>
-        </Grid>
-      );
-    });
-  }
 
   async function removeHabitFromDB(habitId) {
     let url, data, headers;
@@ -92,7 +70,22 @@ function Habits() {
     setUserHabits(userHabits.filter((habit) => habit.habitId !== habitId));
   }
 
-  // async function removeHabitFromCategory(habitId)
+  async function trackHabit(action, habitId) {
+    if (action === 'add') {
+      const url = `/api/users/${user.id}/tracker`;
+      const headers = { Authorization: `Bearer ${token}` };
+      const data = { habitId };
+      const res = await axios.post(url, data, { headers });
+      console.log(res)
+    } else {
+      const url = `/api/users/${user.id}/tracker`;
+      const headers = { Authorization: `Bearer ${token}` };
+      const data = { habitId };
+      const res = await axios.delete(url, { data, headers });
+      console.log(res);
+    
+    }
+  }
 
   if (!userHabits) return <div>Loading...</div>;
 
@@ -110,7 +103,7 @@ function Habits() {
     setCustomHabit(habitName);
   };
 
-  if (addShowing) {
+  const renderAddHabit = () => {
     return (
       <AddHabit
         userHabits={userHabits}
@@ -122,6 +115,10 @@ function Habits() {
         setUserHabits={setUserHabits}
       />
     );
+  };
+
+  if (addShowing) {
+    return renderAddHabit();
   } else {
     return (
       <Grid
@@ -129,34 +126,20 @@ function Habits() {
         direction="column"
         justifyContent="center"
         alignItems="center"
-        sx={{ mt: 3 }}
-      >
-        <Typography variant="h4">Habits</Typography>
-
-        <Grid container justifyContent="center" alignItems="center" spacing={2}>
-          <Grid item>
-            <Button onClick={handleClick}>Add habit</Button>
-          </Grid>
-          <Grid item>
-            <Button onClick={() => setEditMode(!editMode)}>
-              {editMode ? "Done" : "Edit"}
-            </Button>
-          </Grid>
+        sx={{ mt: 3 }}>
+        <Grid item>
+          <Typography variant="h4">Habits</Typography>
         </Grid>
-
-        <Grid
-          container
-          direction="column"
-          alignItems="center"
-          justifyContent="center"
-          sx={{ width: "100%" }}
-        >
-          <Grid item></Grid>
-          <Grid item xs={6} sm={4}>
-            {getHabits()}
-          </Grid>
-          <Grid item></Grid>
-        </Grid>
+        
+        <HabitList
+          userHabits={userHabits}
+          editMode={editMode}
+          setEditMode={setEditMode}
+          handleRemoveHabit={handleRemoveHabit}
+          handleClick={handleClick}
+          trackHabit={trackHabit}
+          habitLog={habitLog}
+        />
       </Grid>
     );
   }
