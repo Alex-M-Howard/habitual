@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Grid, Typography } from "@mui/material";
+import { Button, Grid, Typography, Stack } from "@mui/material";
 import NestedList from "@/components/NestedList";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
@@ -90,8 +90,7 @@ function AddHabit({
       direction="column"
       justifyContent="center"
       alignItems="center"
-      sx={{ mt: 3 }}
-    >
+      sx={{ mt: 3 }}>
       <Typography variant="h4">Add Habit</Typography>
       <NestedList
         userHabits={userHabits}
@@ -100,8 +99,10 @@ function AddHabit({
         customHabit={customHabit}
         setCustomHabit={setCustomHabit}
       />
-      <Button onClick={handleAdd}>Add Habit</Button>
-      <Button onClick={() => setAddShowing(false)}>Cancel</Button>
+      <Stack spacing={2} direction="row">
+        <Button variant="contained" onClick={handleAdd}>Add Habit</Button>
+        <Button variant="contained" onClick={() => setAddShowing(false)}>Cancel</Button>
+      </Stack>
     </Grid>
   );
 }
