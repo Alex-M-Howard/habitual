@@ -33,25 +33,17 @@ export default async function handler(req, res) {
         return res.status(400).json({ errors: errs });
       }
 
-      response = await User.logUserHabit({
-        userId: parseInt(req.query.userId),
-        ...req.body,
-      });
+      req.body.userId = parseInt(req.query.userId);
+      response = await User.logUserHabit(req.body);
 
       if (response.error) return res.status(400).json(response);
       return res.status(200).json(response);
 
-    // TODO Add delete to undo a completed habit
-    // case "DELETE":
-    // validator = jsonschema.validate(req.body, userHabitDeleteSchema);
-
-    // if (!validator.valid) {
-    //   const errs = validator.errors.map((error) => error.stack);
-    //   return res.status(400).json({ errors: errs });
-    // }
-
-    // response = await User.removeUserHabit(req.body);
-    // return res.status(200).json(response);
+    case "DELETE":
+      // TODO - Add validation
+      req.body.userId = parseInt(req.query.userId);
+    response = await User.removeLoggedUserHabit(req.body);
+    return res.status(200).json(response);
 
     default:
       return res.status(405).json({ error: "Method not allowed" });
