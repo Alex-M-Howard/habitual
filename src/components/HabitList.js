@@ -13,27 +13,32 @@ const initialCheckedState = userHabits
   .filter((habit) => isHabitTracked(habit.habitId))
   .map((habit) => habit.habitId);
 
-const [checked, setChecked] = useState(initialCheckedState);
+  const [checked, setChecked] = useState(initialCheckedState);
+  const [loading, setLoading] = useState(false);
 
 useEffect(() => {
   setChecked(initialCheckedState);
 }, [userHabits, habitLog]);
 
 
-  const handleToggle = (value) => () => {
+  const handleToggle = (value) => async () => {
+    if (loading) return;
+
+    setLoading(true);
+
     const currentIndex = checked.indexOf(value);
     const newChecked = [...checked];
 
     if (currentIndex === -1) {
       newChecked.push(value);
-      trackHabit('add', value);
+      await trackHabit('add', value);
     } else {
-      trackHabit('remove', value);
+      await trackHabit("remove", value);
       newChecked.splice(currentIndex, 1);
     }
 
     setChecked(newChecked);
-
+    setLoading(false);
   };
 
     const getHabits = () => {
@@ -55,6 +60,10 @@ useEffect(() => {
                 <ListItemText
                   style={{
                     minWidth: "250px",
+                    textDecoration:
+                      checked.indexOf(habit.habitId) !== -1
+                        ? "line-through"
+                        : "none",
                   }}>
                   {habit.habitName}
                 </ListItemText>
@@ -81,6 +90,7 @@ useEffect(() => {
                       inputProps={{
                         "aria-labelledby": `switch-list-label-${habit.habitId}`,
                       }}
+                        disabled={loading}
                     />
                   </div>
                 )}
