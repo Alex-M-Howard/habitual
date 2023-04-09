@@ -107,7 +107,19 @@ function Journals() {
   }
 
   async function handleNewEntryButtonClick() {
-    if(isEditing) setIsEditing(false);
+    if (isEditing) setIsEditing(false);
+    
+    const existingJournal = journals.find((journal) => {
+      const today = new Date();
+      const journalDate = new Date(journal.date);
+      return today.toDateString() === journalDate.toDateString();
+    });
+
+    if (existingJournal) {
+      setSelectedJournal(existingJournal);
+      setIsEditing(true);
+      return;
+    }
 
     const url = `/api/users/${user.id}/journal`;
     const headers = { Authorization: `Bearer ${token}` };
