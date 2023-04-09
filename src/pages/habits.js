@@ -71,20 +71,15 @@ function Habits() {
   }
 
   async function trackHabit(action, habitId) {
-    if (action === 'add') {
       const url = `/api/users/${user.id}/tracker`;
       const headers = { Authorization: `Bearer ${token}` };
       const data = { habitId };
-      const res = await axios.post(url, data, { headers });
-      console.log(res)
-    } else {
-      const url = `/api/users/${user.id}/tracker`;
-      const headers = { Authorization: `Bearer ${token}` };
-      const data = { habitId };
-      const res = await axios.delete(url, { data, headers });
-      console.log(res);
-    
-    }
+      if (action === "add") {
+        const res = await axios.post(url, data, { headers });
+      }
+        else {
+      const res = await axios.delete(url, { data, headers });          
+      }
   }
 
   if (!userHabits) return <div>Loading...</div>;
