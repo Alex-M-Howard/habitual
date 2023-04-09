@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Form from "@/components/Form";
 import { Alert, AlertTitle, Grid, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import useMessageTimer from "@/hooks/useAlerts";
 import axios from "axios";
 
@@ -11,6 +11,9 @@ function Profile() {
   const [hidden, hide] = useMessageTimer(error, 3000);
   const { user, token } = useSelector((store) => store.user.loggedIn);
   const theme = useTheme();
+  const dispatch = useDispatch();
+
+  if (!user) return null;
 
   let changes = null;
 
@@ -19,6 +22,7 @@ function Profile() {
     { name: "lastName", label: "Last Name" },
     { name: "email", label: "Email" },
   ];
+
   const initialValues = {
     firstName: user.firstName,
     lastName: user.lastName,
@@ -32,12 +36,21 @@ function Profile() {
       let res = await axios.put(`/api/users/${user.id}`, formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      // TODO - update user in redux store
-      // TODO - update user in local storage
+
+      const updatedUser = {
+        ...user,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+      };
       // TODO - Fix error message to be a success message
-      // user.firstName = formData.firstName;
-      // user.lastName = formData.lastName;
-      // user.email = formData.email;
+
+      
+      dispatch({ type: "LOGIN", payload: { user:updatedUser, token } });
+      dispatch({
+        type: "SAVE_TO_LOCALSTORAGE",
+        payload: { user: updatedUser, token },
+      });      
 
       setError("Profile Updated");
       hide(1);
