@@ -72,6 +72,20 @@ function Login() {
         Login
       </Typography>
 
+      <Typography
+        align="center"
+        variant="h6"
+        sx={{ mt: 5, color: `${theme.palette.text.main}` }}>
+        Try it out:
+      </Typography>
+
+      <Typography
+        align="center"
+        variant="h6"
+        sx={{ mt: 5, color: `${theme.palette.text.main}` }}>
+        email: guest@guest.com password: password
+      </Typography>
+
       <Form
         fields={fields}
         initialValues={initialValues}
