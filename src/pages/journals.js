@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import { Grid, Typography } from "@mui/material";
+import { Grid, Typography, IconButton } from "@mui/material";
+import { Delete } from "@mui/icons-material";
 import styles from "@/styles/Journals.module.css";
 
 function Journals() {
@@ -43,30 +44,43 @@ function Journals() {
 
     return Object.keys(groupedJournals).map((groupKey) => {
       const journalsInGroup = groupedJournals[groupKey];
-      return (
-        <div key={groupKey}>
-          <h3
-            onClick={() => toggleMonth(groupKey)}
-            style={{ cursor: "pointer" }}
-          >
-            {collapsedMonths[groupKey] ? "▶" : "▼"} {groupKey}
-          </h3>
-          {!collapsedMonths[groupKey] &&
-            journalsInGroup.map((journal) => (
-              <div
-                key={journal.id}
-                onClick={() => selectJournal(journal)}
-                className={
-                  selectedJournal?.id === journal.id
-                    ? styles.selectedJournal
-                    : ""
-                }
-              >
-                <h4>{formatDate(journal.date)}</h4>
-              </div>
-            ))}
-        </div>
-      );
+          return (
+      <div key={groupKey}>
+        <h3
+          onClick={() => toggleMonth(groupKey)}
+          style={{ cursor: "pointer" }}
+        >
+          {collapsedMonths[groupKey] ? "▶" : "▼"} {groupKey}
+        </h3>
+        {!collapsedMonths[groupKey] &&
+          journalsInGroup.map((journal) => (
+            <div
+              key={journal.id}
+              onClick={() => selectJournal(journal)}
+              className={
+                selectedJournal?.id === journal.id
+                  ? styles.selectedJournal
+                  : ""
+              }
+            >
+              <h4>
+                {formatDate(journal.date)}{" "}
+                <IconButton
+                  edge="end"
+                  color="inherit"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteEntry(journal.id);
+                  }}
+                >
+                  <Delete />
+                </IconButton>
+              </h4>
+            </div>
+          ))}
+      </div>
+    );
+
     });
   }
 
@@ -93,6 +107,8 @@ function Journals() {
   }
 
   async function handleNewEntryButtonClick() {
+    if(isEditing) setIsEditing(false);
+
     const url = `/api/users/${user.id}/journal`;
     const headers = { Authorization: `Bearer ${token}` };
     const data = { entry: "" };
@@ -103,6 +119,22 @@ function Journals() {
     setSelectedJournal(newJournal);
     setIsEditing(true);
   }
+
+  async function handleDeleteEntry(journalId) {
+    const url = `/api/users/${user.id}/journal`;
+    const data = { id: journalId}
+  const headers = { Authorization: `Bearer ${token}` };
+  await axios.delete(url, { data, headers });
+
+  const updatedJournals = journals.filter(
+    (journal) => journal.id !== journalId
+  );
+  setJournals(updatedJournals);
+
+  if (selectedJournal?.id === journalId) {
+    setSelectedJournal(null);
+  }
+}
 
   function renderSelectedJournal() {
     if (!selectedJournal) {

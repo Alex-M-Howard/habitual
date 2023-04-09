@@ -42,18 +42,10 @@ export default async function handler(req, res) {
 
       if (response.error) return res.status(400).json(response);
       return res.status(200).json(response);
-
-    // TODO - Add delete for journals
-    // case "DELETE":
-    //   validator = jsonschema.validate(req.body, habit_categoriesDeleteSchema);
-
-    //   if (!validator.valid) {
-    //     const errs = validator.errors.map((error) => error.stack);
-    //     return res.status(400).json({ errors: errs });
-    //   }
-
-    //   response = await HabitCategories.remove(req.body);
-    //   return res.status(200).json(response);
+    
+    case "DELETE":
+      response = await Journals.remove(req.body);
+      return res.status(200).json(response);
 
     default:
       return res.status(405).json({ error: "Method not allowed" });
