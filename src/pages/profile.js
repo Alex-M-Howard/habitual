@@ -32,6 +32,10 @@ function Profile() {
   const handleSubmit = async (formData) => {
     if (error) setError(null);
 
+    if (user.email === 'guest@guest.com') {
+      formData.email = 'guest@guest.com';
+    }
+
     try {
       let res = await axios.put(`/api/users/${user.id}`, formData, {
         headers: { Authorization: `Bearer ${token}` },
