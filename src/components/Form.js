@@ -20,6 +20,10 @@ function Form({ fields, initialValues, handleSubmit, buttonText }) {
           style={{ width: "350px" }}
           InputProps={{
             style: { color: `${theme.palette.text.main}` },
+
+          }}
+          InputLabelProps={{
+            style: { color: `${theme.palette.text.main}` },
           }}
         />
       </Grid>
