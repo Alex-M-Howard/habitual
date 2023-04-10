@@ -1,10 +1,12 @@
 import React, {useState, useEffect} from "react";
-import { Grid, Stack, Button, ListItem, List, Switch, ListItemText } from "@mui/material";
+import { Grid, Stack, Button, ListItem, List, Switch, ListItemText, ButtonGroup } from "@mui/material";
 import uuid4 from "uuid4";
+import {useTheme} from "@mui/material";
 
 
 function HabitList({ userHabits, trackHabit, habitLog, editMode, handleRemoveHabit, handleClick, setEditMode }) {
 
+  const theme = useTheme();
 const isHabitTracked = (habitId) => {
   return habitLog.some((log) => log.habitId === habitId);
 };
@@ -64,6 +66,9 @@ useEffect(() => {
                       checked.indexOf(habit.habitId) !== -1
                         ? "line-through"
                         : "none",
+                    color: theme.palette.text.main,
+                    textDecorationColor: theme.palette.primary.main,
+                    textDecorationThickness: "2px",
                   }}>
                   {habit.habitName}
                 </ListItemText>
@@ -76,6 +81,7 @@ useEffect(() => {
                         fontWeight: "bold",
                         fontSize: "1.5rem",
                         width: "45px",
+                        color: theme.palette.accent.alternate,
                       }}
                       onClick={() => handleRemoveHabit(habit.habitId)}>
                       X
@@ -118,17 +124,19 @@ useEffect(() => {
       <Grid container justifyContent="center" alignItems="center" spacing={2}>
         <Grid item>
           <Stack spacing={2} direction="row">
-            <Button variant="contained" onClick={handleClick}>
+            <Button variant="outlined" onClick={handleClick}>
               Add habit
             </Button>
             <Button
-              variant="contained"
+              variant="outlined"
               onClick={() => setEditMode(!editMode)}
               style={{
                 minWidth: "150px", // Set a minimum width for the Remove Habit/Done button
               }}>
               {editMode ? "Done" : "Remove Habit"}
-            </Button>
+
+              </Button>
+              
           </Stack>
         </Grid>
       </Grid>

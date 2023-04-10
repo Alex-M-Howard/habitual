@@ -33,18 +33,19 @@ function Form({ fields, initialValues, handleSubmit, buttonText }) {
         e.preventDefault();
         handleSubmit(formData);
       }}
-      style={{ width: "100vw" }}
-    >
+      style={{ width: "100vw" }}>
       <Grid
         container
         direction="column"
         alignItems="center"
         spacing={2}
-        sx={{ mt: 3 }}
-      >
+        sx={{ mt: 3 }}>
         {renderFields}
         <Grid item>
-          <Button variant="contained" type="submit" sx={{ width: "350px" }}>
+          <Button
+            variant="outlined"
+            type="submit"
+            sx={{width: "350px"}}>
             {buttonText}
           </Button>
         </Grid>

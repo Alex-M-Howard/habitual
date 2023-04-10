@@ -123,7 +123,7 @@ class User {
    * @param {{OBJ}} data - Can contain various keys to change
    * @returns  {user: {firstName, lastName, email, dateJoined}}
    */
-  static async update(email, data) {
+  static async update(data) {
     if (data.password) {
       data.password = await bcrypt.hash(data.password, BCRYPT_WORK_FACTOR);
     }
@@ -133,21 +133,22 @@ class User {
       lastName: "last_name",
       email: "email",
     });
-    const emailVarIdx = "$" + (values.length + 1);
+
+    const idVarIdx = "$" + (values.length + 1);
 
     const querySql = `UPDATE users 
                       SET ${setCols} 
-                      WHERE email = ${emailVarIdx} 
+                      WHERE id = ${idVarIdx} 
                       RETURNING id,
                                 email,
                                 first_name AS "firstName",
                                 last_name AS "lastName",
                                 date_joined AS "dateJoined"`;
-    const result = await db.query(querySql, [...values, email]);
+    const result = await db.query(querySql, [...values, data.id]);
     const user = result.rows[0];
 
     if (!user) {
-      return { error: `${email} not found. Update unsuccessful` };
+      return { error: `User ${id} not found. Update unsuccessful` };
     }
 
     delete user.password;
@@ -268,6 +269,7 @@ class User {
    *  Get user habit log
    */
   static async getUserLogToday(userId) {
+    
     const existanceCheck = await db.query(
       `
       SELECT * FROM users WHERE id=$1`,

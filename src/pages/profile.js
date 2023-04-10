@@ -71,21 +71,28 @@ function Profile() {
       container
       direction="column"
       justifyContent="center"
-      alignItems="center"
-    >
+      alignItems="center">
       <div
         style={{
-          height: "150px",
+          height: "100px",
           overflow: "hidden",
           opacity: hidden ? 1 : 0,
           transition: "opacity 0.3s ease-in-out",
-        }}
-      >
+        }}>
         <Alert
           sx={{
             m: 2,
             width: "350px",
-            backgroundColor: `${theme.palette.error.background}`,
+            backgroundColor: `${
+              severity === "error"
+                ? theme.palette.error.main
+                : theme.palette.success.main
+            }`,
+            color: `${
+              severity === "error"
+                ? theme.palette.error.secondary
+                : theme.palette.success.secondary
+            }`,
           }}
           severity="error"
         >
@@ -93,7 +100,10 @@ function Profile() {
           {error}
         </Alert>
       </div>
-      <Typography align="center" variant="h3" sx={{ mt: 5 }}>
+      <Typography
+        align="center"
+        variant="h4"
+        sx={{ mt: 5, color: theme.palette.text.main }}>
         {`${user.firstName}'s`} Profile
       </Typography>
 

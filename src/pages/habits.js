@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { Button, Grid, Typography, ButtonGroup, Stack } from "@mui/material";
 import uuid4 from "uuid4";
+import { useTheme } from "@mui/material/styles";
 
 // Internal Imports
 import AddHabit from "@/components/AddHabit";
@@ -17,6 +18,7 @@ function Habits() {
   const [categories, setCategories] = useState([]);
   const [addShowing, setAddShowing] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const theme = useTheme();
 
   useEffect(() => {
     async function fetchHabits() {
@@ -123,7 +125,7 @@ function Habits() {
         alignItems="center"
         sx={{ mt: 3 }}>
         <Grid item>
-          <Typography variant="h4">Habits</Typography>
+          <Typography variant="h4" sx={{color: theme.palette.text.main}}>Habits</Typography>
         </Grid>
         
         <HabitList

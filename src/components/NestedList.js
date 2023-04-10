@@ -11,6 +11,7 @@ import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import uuid4 from "uuid4";
+import {useTheme} from "@mui/material";
 
 function NestedList({
   userHabits,
@@ -23,6 +24,7 @@ function NestedList({
   const [categories, setCategories] = useState([]);
   const [selectedHabitId, setSelectedHabitId] = useState(null);
   const { user, token } = useSelector((store) => store.user.loggedIn);
+  const theme = useTheme();
 
   useEffect(() => {
     async function getCategories() {
@@ -68,11 +70,23 @@ function NestedList({
                   in={open[category.id]}
                   timeout="auto"
                   unmountOnExit
-                  key={uuid4()}
-                >
+                  key={uuid4()}>
                   <List component="div" disablePadding key={uuid4()}>
-                    <ListItemButton sx={{ pl: 4 }} disabled={true}>
-                      <ListItemText primary={habit.habitName} />
+                    <ListItemButton
+                      sx={{
+                        pl: 4,
+                        "&:hover": {
+                          backgroundColor: theme.palette.text.main,
+                           '& .MuiListItemText-primary': {
+        color: theme.palette.text.secondary,
+      },
+                        },
+                      }}
+                      disabled={true}>
+                      <ListItemText
+                        primary={habit.habitName}
+                        style={{ color: theme.palette.text.main }}
+                      />
                     </ListItemButton>
                   </List>
                 </Collapse>
@@ -83,8 +97,7 @@ function NestedList({
                   in={open[category.id]}
                   timeout="auto"
                   unmountOnExit
-                  key={uuid4()}
-                >
+                  key={uuid4()}>
                   <List component="div" disablePadding key={uuid4()}>
                     <ListItemButton
                       sx={{
@@ -92,14 +105,20 @@ function NestedList({
                         backgroundColor: isSelected
                           ? "primary.main"
                           : "transparent",
+                        "&:hover": {
+                          backgroundColor: "primary.main",
+                          "& .MuiListItemText-primary": {
+                            color: theme.palette.text.secondary,
+                          },
+                        },
                       }}
-                      onClick={() => handleHabitClick(habit.habitId)}
-                    >
+                      onClick={() => handleHabitClick(habit.habitId)}>
                       <ListItemText
                         primary={habit.habitName}
+                        style={{ color: theme.palette.text.main }}
                         primaryTypographyProps={{
                           color: isSelected
-                            ? "primary.contrastText"
+                            ? theme.palette.text.secondary
                             : "inherit",
                         }}
                       />
@@ -114,9 +133,25 @@ function NestedList({
 
       return (
         <div key={uuid4()}>
-          <ListItemButton onClick={() => handleClick(category.id)}>
-            <ListItemText primary={category.name} />
-            {open[category.id] ? <ExpandLess /> : <ExpandMore />}
+          <ListItemButton
+            onClick={() => handleClick(category.id)}
+            sx={{
+              "&:hover": {
+                backgroundColor: "primary.main",
+                "& .MuiListItemText-primary": {
+                  color: theme.palette.text.secondary,
+                },
+              },
+            }}>
+            <ListItemText
+              primary={category.name}
+              style={{ color: theme.palette.text.main }}
+            />
+            {open[category.id] ? (
+              <ExpandLess sx={{ color: theme.palette.text.main }} />
+            ) : (
+              <ExpandMore sx={{ color: theme.palette.text.main }} />
+            )}
           </ListItemButton>
           {habitList()}
         </div>
@@ -130,17 +165,42 @@ function NestedList({
       component="nav"
       aria-labelledby="nested-list-subheader"
       subheader={
-        <ListSubheader component="div" id="nested-list-subheader">
+        <ListSubheader
+          component="div"
+          id="nested-list-subheader"
+          style={{ color: theme.palette.text.main }}>
           Habits
         </ListSubheader>
-      }
-    >
+      }>
       {listCategories()}
       <ListItemButton
         selected={selectedHabitId === "other"}
         onClick={handleOtherCategoryClick}
-      >
-        <ListItemText primary="Create New Habit" />
+        sx={{
+          backgroundColor:
+            selectedHabitId === "other"
+              ? theme.palette.primary.main
+              : "transparent",
+          color:
+            selectedHabitId === "other"
+              ? theme.palette.text.secondary
+              : "inherit",
+          "&:hover": {
+            backgroundColor: theme.palette.primary.light,
+          },
+          "&:hover .MuiListItemText-primary": {
+            color: theme.palette.text.secondary,
+          },
+        }}>
+        <ListItemText
+          primary="Create New Habit"
+          style={{
+            color:
+              selectedHabitId === "other"
+                ? theme.palette.text.secondary
+                : theme.palette.text.main,
+          }}
+        />
       </ListItemButton>
       {selectedHabitId === "other" && (
         <TextField
@@ -148,8 +208,12 @@ function NestedList({
           variant="outlined"
           size="small"
           value={customHabit}
+          placeholder="Enter a custom habit"
           onChange={(e) => setCustomHabit(e.target.value)}
           sx={{ mt: 2, mb: 2, width: "100%" }}
+          style={{ color: `${theme.palette.text.main}` }}
+          InputLabelProps={{ style: { color: `${theme.palette.text.main}` } }}
+          InputProps={{ style: { color: `${theme.palette.text.main}` } }}
         />
       )}
     </List>

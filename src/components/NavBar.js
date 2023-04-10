@@ -133,7 +133,16 @@ function NavBar(props) {
                 color: `${theme.palette.text.navbar}`,
               }}
             >
-              Habitual
+              <Box
+                component="img"
+                src="/logo.png"
+                alt="Habitual"
+                sx={{
+                  height: "50px",
+                  mt: "6px",
+                }}
+
+              />
             </Link>
           </Typography>
           <Box sx={{ display: { xs: "none", sm: "block" } }}>
@@ -147,7 +156,8 @@ function NavBar(props) {
                 <Button
                   key={item}
                   sx={{
-                    color: `${theme.palette.text.navbar}`,
+                    backgroundColor: theme.palette.background.navbar,
+                    color: theme.palette.text.navbar,
                     fontWeight: `${
                       router.pathname === `/${item.toLowerCase()}`
                         ? "bold"
@@ -160,9 +170,11 @@ function NavBar(props) {
               </Link>
             ))}
 
-            <Button key="theme-toggle" onClick={onToggleTheme}>
+            <Button key="theme-toggle" onClick={onToggleTheme} sx={{backgroundColor: theme.palette.background.navbar}}>
               <Brightness4Icon
-                style={{ color: `${theme.palette.text.navbar}` }}
+                style={{
+                  color: `${theme.palette.text.navbar}`,
+                }}
               />
             </Button>
           </Box>

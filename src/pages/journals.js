@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import { Grid, Typography, IconButton } from "@mui/material";
+import { Grid, Typography, IconButton, Button, ButtonGroup } from "@mui/material";
 import { Delete } from "@mui/icons-material";
 import styles from "@/styles/Journals.module.css";
+const {useTheme} = require("@mui/material/styles");
 
 function Journals() {
   const { user, token } = useSelector((store) => store.user.loggedIn);
@@ -12,6 +13,7 @@ function Journals() {
   const [isEditing, setIsEditing] = useState(false);
   const [editedEntry, setEditedEntry] = useState("");
   const [collapsedMonths, setCollapsedMonths] = useState({});
+  const theme = useTheme();
 
   useEffect(() => {
     async function getJournals() {
@@ -45,41 +47,42 @@ function Journals() {
     return Object.keys(groupedJournals).map((groupKey) => {
       const journalsInGroup = groupedJournals[groupKey];
           return (
-      <div key={groupKey}>
-        <h3
-          onClick={() => toggleMonth(groupKey)}
-          style={{ cursor: "pointer" }}
-        >
-          {collapsedMonths[groupKey] ? "▶" : "▼"} {groupKey}
-        </h3>
-        {!collapsedMonths[groupKey] &&
-          journalsInGroup.map((journal) => (
-            <div
-              key={journal.id}
-              onClick={() => selectJournal(journal)}
-              className={
-                selectedJournal?.id === journal.id
-                  ? styles.selectedJournal
-                  : ""
-              }
-            >
-              <h4>
-                {formatDate(journal.date)}{" "}
-                <IconButton
-                  edge="end"
-                  color="inherit"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeleteEntry(journal.id);
-                  }}
-                >
-                  <Delete />
-                </IconButton>
-              </h4>
+            <div key={groupKey}>
+              <h3
+                onClick={() => toggleMonth(groupKey)}
+                style={{ cursor: "pointer", color: theme.palette.text.main }}>
+                {collapsedMonths[groupKey] ? "▶" : "▼"} {groupKey}
+              </h3>
+              {!collapsedMonths[groupKey] &&
+                journalsInGroup.map((journal) => (
+                  <div
+                    key={journal.id}
+                    onClick={() => selectJournal(journal)}
+                    className={
+                      selectedJournal?.id === journal.id
+                        ? styles.selectedJournal
+                        : ""
+                    }
+                    style={{ display: 'flex', height: '60px', justifyContent: 'space-between', alignItems: 'center', color: theme.palette.text.main}}
+                  >
+                    <h4 style={{ color: theme.palette.text.main }}>
+                      {formatDate(journal.date)}{" "}
+                      <IconButton
+                        edge="end"
+                        color="inherit"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteEntry(journal.id);
+                        }}
+                        style={{ color: theme.palette.accent.alternate}}
+                      >
+                        <Delete />
+                      </IconButton>
+                    </h4>
+                  </div>
+                ))}
             </div>
-          ))}
-      </div>
-    );
+          );
 
     });
   }
@@ -152,8 +155,8 @@ function Journals() {
     if (!selectedJournal) {
       return (
         <div>
-          <button onClick={handleNewEntryButtonClick}>New Entry</button>
-          <p>Select a journal from the left pane to view its content.</p>
+          <Button variant="outlined" onClick={handleNewEntryButtonClick}>New Entry</Button>
+          <p style={{color: theme.palette.text.main}}>Select a journal from the left pane to view its content.</p>
         </div>
       );
     }
@@ -165,16 +168,36 @@ function Journals() {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-          }}
-        >
-          <h2>{formatDate(selectedJournal.date)}</h2>
+          }}>
+          <h2 style={{ color: theme.palette.text.main }}>
+            {formatDate(selectedJournal.date)}
+          </h2>
           <div>
-            <button onClick={handleNewEntryButtonClick}>New Entry</button>
-            {isEditing ? (
-              <button onClick={handleSaveButtonClick}>Save</button>
-            ) : (
-              <button onClick={handleEditButtonClick}>Edit</button>
-            )}
+            <ButtonGroup
+              variant="outlined"
+              aria-label="text button group">
+              <Button
+                sx={{ width: "125px" }}
+              
+                onClick={handleNewEntryButtonClick}>
+                New Entry
+              </Button>
+              {isEditing ? (
+                <Button
+                  sx={{ width: "125px" }}
+                  
+                  onClick={handleSaveButtonClick}>
+                  Save
+                </Button>
+              ) : (
+                <Button
+                  sx={{ width: "125px" }}
+                  
+                  onClick={handleEditButtonClick}>
+                  Edit
+                </Button>
+              )}
+            </ButtonGroup>
           </div>
         </div>
         {isEditing ? (
@@ -185,7 +208,7 @@ function Journals() {
             style={{ width: "100%" }}
           />
         ) : (
-          <p>{selectedJournal.entry}</p>
+          <p style={{ color: theme.palette.text.main }}>{selectedJournal.entry}</p>
         )}
       </div>
     );
@@ -216,7 +239,7 @@ function Journals() {
 
   return (
     <div>
-      <Typography variant="h3" align="center" gutterBottom>
+      <Typography variant="h4" align="center" gutterBottom sx={{mt: 2, color: theme.palette.text.main}}>
         Journals
       </Typography>
       <Grid container justifyContent="center">

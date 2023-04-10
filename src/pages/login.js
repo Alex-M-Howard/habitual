@@ -58,7 +58,8 @@ function Login() {
           sx={{
             m: 2,
             width: "350px",
-            backgroundColor: `${theme.palette.error.background}`,
+            backgroundColor: `${theme.palette.error.main}`,
+            color: `${theme.palette.error.secondary}`,
           }}
           severity="error">
           <AlertTitle>Error</AlertTitle>
@@ -95,7 +96,7 @@ function Login() {
       <Typography
         align="center"
         variant="subtitle1"
-        sx={{ mt: 1, color: `${theme.palette.text.secondary}` }}>
+        sx={{ mt: 1, color: `${theme.palette.text.main}` }}>
         New user?{" "}
         <Link
           href="/signup"

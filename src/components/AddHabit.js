@@ -4,6 +4,7 @@ import NestedList from "@/components/NestedList";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import axios from "axios";
+import {useTheme} from "@mui/material/styles";
 
 const OTHER_CATEGORY_ID = 10;
 
@@ -23,21 +24,23 @@ function AddHabit({
   const initialValues = {
     name: "",
   };
+  const theme = useTheme();
 
   const addHabitToUser = async (habitId) => {
     const data = { habitId, frequency: 1 };
     const url = `/api/users/${user.id}/habits`;
     const headers = { Authorization: `Bearer ${token}` };
 
-    const response = await axios.post(url, data, { headers });
-    if (response.status === 200) {
-      const habitId = response.data[0].habitId;
-      const habitName = customHabit;
+    try {
+      const response = await axios.post(url, data, { headers });
+      if (response.status === 200) {
+        const habitId = response.data[0].habitId;
+        const habitName = customHabit;
 
-      setUserHabits([...userHabits, { habitId, habitName, frequency: 1 }]);
-      setAddShowing(false);
-    } else {
-      // TODO - Handle error
+        setUserHabits([...userHabits, { habitId, habitName, frequency: 1 }]);
+        setAddShowing(false);
+      }
+    } catch (error) {   
       console.log("Error");
     }
   };
@@ -91,7 +94,6 @@ function AddHabit({
       justifyContent="center"
       alignItems="center"
       sx={{ mt: 3 }}>
-      <Typography variant="h4">Add Habit</Typography>
       <NestedList
         userHabits={userHabits}
         habitCategories={categories}
@@ -99,9 +101,9 @@ function AddHabit({
         customHabit={customHabit}
         setCustomHabit={setCustomHabit}
       />
-      <Stack spacing={2} direction="row">
-        <Button variant="contained" onClick={handleAdd}>Add Habit</Button>
-        <Button variant="contained" onClick={() => setAddShowing(false)}>Cancel</Button>
+      <Stack spacing={2} sx={{ mt: 2}} direction="row">
+        <Button variant="outlined" onClick={handleAdd}>Add Habit</Button>
+        <Button variant="outlined" onClick={() => setAddShowing(false)}>Cancel</Button>
       </Stack>
     </Grid>
   );
