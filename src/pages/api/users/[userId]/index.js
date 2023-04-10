@@ -38,7 +38,8 @@ export default async (req, res) => {
         return res.status(400).json({ errors: errs });
       }
 
-      response = await User.update(user.email, req.body);
+      req.body.id = parseInt(req.query.userId);
+      response = await User.update(req.body);
 
       if (response.error) return res.status(400).json(response);
       return res.status(200).json(response);

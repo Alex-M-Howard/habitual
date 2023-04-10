@@ -18,7 +18,7 @@ export default async function handler(req, res) {
         const token = createToken(user);
         return res.status(201).json({ user, token });
       } catch (error) {
-        return res.status(400).json({ errors: error });
+        return res.status(400).json({ error });
       }
 
     default:

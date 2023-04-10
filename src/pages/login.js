@@ -32,11 +32,10 @@ function Login() {
       const { data } = await axios.post("/api/login", formData);
       dispatch({ type: "LOGIN", payload: data });
       dispatch({ type: "SAVE_TO_LOCALSTORAGE", payload: data });
-      await router.push("/");
+      await router.push("/habits");
     } catch (error) {
-      // TODO Remove Hardcoded error
-      console.log(error)
-      setError("Email/Password is incorrect.");
+
+      setError(error.response.data.error.message);
       hide(1);
     }
   };

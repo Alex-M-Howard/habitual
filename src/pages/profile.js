@@ -7,8 +7,9 @@ import useMessageTimer from "@/hooks/useAlerts";
 import axios from "axios";
 
 function Profile() {
-  const [error, setError] = useState(null);
-  const [hidden, hide] = useMessageTimer(error, 3000);
+  const [message, setMessage] = useState(null);
+  const [severity, setSeverity] = useState('success');
+  const [hidden, hide] = useMessageTimer(message, 3000);
   const { user, token } = useSelector((store) => store.user.loggedIn);
   const theme = useTheme();
   const dispatch = useDispatch();
@@ -30,7 +31,7 @@ function Profile() {
   };
 
   const handleSubmit = async (formData) => {
-    if (error) setError(null);
+    if (message) setMessage(null);
 
     if (user.email === 'guest@guest.com') {
       formData.email = 'guest@guest.com';
@@ -47,19 +48,20 @@ function Profile() {
         lastName: formData.lastName,
         email: formData.email,
       };
-      // TODO - Fix error message to be a success message
-
       
       dispatch({ type: "LOGIN", payload: { user:updatedUser, token } });
-      dispatch({
-        type: "SAVE_TO_LOCALSTORAGE",
-        payload: { user: updatedUser, token },
-      });      
+      dispatch({ type: "SAVE_TO_LOCALSTORAGE", payload: { user: updatedUser, token } });      
 
-      setError("Profile Updated");
+      setMessage("Profile Updated");
+      setSeverity("success");
       hide(1);
     } catch (error) {
-      setError(error.message);
+      if (error.response.data.errors.includes('instance.email does not conform to the "email" format')
+      ) {
+        error.response.data.errors.message = "Email is not in correct format";
+      }
+      setMessage(error.response.data.errors.message);
+      setSeverity("error");
       hide(1);
     }
 
@@ -94,10 +96,9 @@ function Profile() {
                 : theme.palette.success.secondary
             }`,
           }}
-          severity="error"
-        >
-          <AlertTitle>Error</AlertTitle>
-          {error}
+          severity={severity}>
+          <AlertTitle>Attention</AlertTitle>
+          {message}
         </Alert>
       </div>
       <Typography
