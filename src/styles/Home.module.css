@@ -276,3 +276,43 @@
     transform: rotate(0deg);
   }
 }
+
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 0 2rem;
+}
+
+.header {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.title {
+  font-size: 3rem;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 1.5rem;
+  font-weight: normal;
+  margin: 0;
+}
+
+.main {
+  flex: 1;
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.description {
+  line-height: 1.5;
+  margin: 0 auto;
+  max-width: 600px;
+}
+
+.footer {
+  margin-top: 2rem;
+  text-align: center;
+}
