@@ -1,6 +1,6 @@
 "use strict";
 
-const { Client } = require("pg");
+const { Pool } = require("pg");
 
 const SECRET_KEY = process.env.NEXTAUTH_SECRET;
 const PGPASSWORD = process.env.PGPASSWORD;
@@ -8,7 +8,6 @@ const PGUSER = process.env.PGUSER;
 const DBHOST = process.env.PGHOST;
 const DBPORT = process.env.PGPORT;
 
-// Use dev database, testing database, or via env var, production database
 function getDatabaseUri() {
   return process.env.NODE_ENV === "test"
     ? "habitual_test"
@@ -18,25 +17,25 @@ function getDatabaseUri() {
 let db;
 let dbUri = getDatabaseUri();
 
-// Speed up bcrypt during tests, since the algorithm safety isn't being tested
 const BCRYPT_WORK_FACTOR = process.env.NODE_ENV === "test" ? 1 : 13;
 
 const connectionString = `postgres://${PGUSER}:${PGPASSWORD}@${DBHOST}:${DBPORT}/${dbUri}`;
 
-if (process.env.NODE_ENV === "production") {
-  db = new Client({
-    connectionString,
+const poolConfig = {
+  connectionString,
+  ...(process.env.NODE_ENV === "production" && {
     ssl: {
       rejectUnauthorized: false,
     },
-  });
-} else {
-  db = new Client({
-    connectionString,
-  });
-}
+  }),
+  idle_in_transaction_session_timeout: 1000, // Set this to a lower value, in milliseconds
+};
 
-db.connect();
+db = new Pool(poolConfig);
+
+db.on("connect", async (client) => {
+  await client.query("SET TIME ZONE 'America/New_York'"); // Replace with your desired timezone
+});
 
 module.exports = {
   db,

@@ -289,7 +289,7 @@ class User {
       day_date AS "date",
       day_id AS "dayId"  
       FROM tracker
-      WHERE user_id=$1 AND date(day_date)=date(NOW())`,
+      WHERE user_id=$1 AND date(day_date)=CURRENT_DATE`,
       [userId]
     );
 
