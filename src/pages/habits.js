@@ -49,6 +49,7 @@ function Habits() {
   }, [user]);
 
   async function removeHabitFromDB(habitId) {
+    try{
     let url, data, headers;
 
     if (habitId > 23) {
@@ -62,26 +63,40 @@ function Habits() {
     headers = { Authorization: `Bearer ${token}` };
     data = { habitId };
     await axios.delete(url, { data, headers });
+    } catch (err) {
+      console.log(err);
+    }
   }
 
+
   async function removeHabitFromUserHabits(habitId) {
+    try {
     let url = `/api/users/${user.id}/habits`;
     let headers = { Authorization: `Bearer ${token}` };
     let data = { habitId };
     await axios.delete(url, { data, headers });
     setUserHabits(userHabits.filter((habit) => habit.habitId !== habitId));
+    } catch (err) {
+      console.log(err);
+    }
   }
 
+
   async function trackHabit(action, habitId) {
+    try {
       const url = `/api/users/${user.id}/tracker`;
       const headers = { Authorization: `Bearer ${token}` };
       const data = { habitId };
       if (action === "add") {
         const res = await axios.post(url, data, { headers });
       }
-        else {
-      const res = await axios.delete(url, { data, headers });          
+      else {
+        const res = await axios.delete(url, { data, headers });
       }
+      
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   if (!userHabits) return <div>Loading...</div>;
