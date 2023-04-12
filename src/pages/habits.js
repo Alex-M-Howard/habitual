@@ -87,6 +87,7 @@ function Habits() {
       const url = `/api/users/${user.id}/tracker`;
       const headers = { Authorization: `Bearer ${token}` };
       const data = { habitId };
+      let res;
       if (action === "add") {
         const res = await axios.post(url, data, { headers });
       }
