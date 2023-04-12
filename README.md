@@ -1,6 +1,6 @@
 # Habitual
 
-![Habitual logo](https://link-to-your-logo-if-available.png)
+![Habitual logo](./public/logo.png)
 
 Habitual is a daily habit tracker that shows you the kind of data to keep you motivated to continue. Key features include a daily journal to keep track of your thoughts, and charts that help show how far you've come and how consistent you're being on your journey.
 
