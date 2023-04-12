@@ -1,38 +1,68 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Habitual
 
-## Getting Started
+![Habitual logo](https://link-to-your-logo-if-available.png)
 
-First, run the development server:
+Habitual is a daily habit tracker that shows you the kind of data to keep you motivated to continue. Key features include a daily journal to keep track of your thoughts, and charts that help show how far you've come and how consistent you're being on your journey.
 
+[**Visit the Habitual website**](https://habitual-ten.vercel.app)
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Usage](#usage)
+- [Screenshots](#screenshots)
+- [Technologies Used](#technologies-used)
+- [Contact Info](#contact-info)
+
+## Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+git clone https://github.com/Alex-M-Howard/habitual.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install the required dependencies:
+```bash
+cd habitual
+npm install
+```
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+3. To build/start the project for production, use the following command:
+```bash
+npm run build
+npm start
+```
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+4. To build/start the project for development, use the following command:
+```bash
+npm run dev
+```
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## Usage
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+1. Open your browser and navigate to `http://localhost:3000` (if running in development mode or production mode).
+2. Start using Habitual to track your daily habits and view your progress.
 
-## Learn More
+## Screenshots
 
-To learn more about Next.js, take a look at the following resources:
+![Habitual screenshot 1](https://link-to-your-screenshot-1.png)
+![Habitual screenshot 2](https://link-to-your-screenshot-2.png)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Technologies Used
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- [Next.js](https://nextjs.org/) 
+  - A modern, high-performance React framework for building server-rendered web applications with fast page loads and seamless transitions.
+- [Chart.js](https://www.chartjs.org/) 
+  - A simple yet flexible JavaScript library for creating beautiful and responsive charts, graphs, and data visualizations in web applications.
+- [React](https://reactjs.org/)
+  - A popular JavaScript library for building reusable and interactive UI components, maintaining state, and efficiently rendering updates.
+- [MUI](https://mui.com/)
+  - A comprehensive, customizable, and accessible UI component library for building modern, responsive web applications with React.
+- [AWS RDS](https://aws.amazon.com/rds/postgresql/)
+  - A managed, scalable, and highly available relational database service from Amazon Web Services, supporting the PostgreSQL database engine.
 
-## Deploy on Vercel
+## Contact Info
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- Name: Alex Howard
+- Email: [alex-m-howard@pm.me](mailto:alex-m-howard@pm.me)
+- Website: [https://alex-m-howard.com](https://alex-m-howard.com)
