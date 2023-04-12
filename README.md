@@ -45,12 +45,12 @@ npm run dev
 
 ## Screenshots
 
-![Habitual screenshot 1](https://imgur.com/IzCrXnK)
-![Habitual screenshot 2](https://imgur.com/iBd2CMc)
-![Habitual screenshot 3](https://imgur.com/laDvdQ3)
-![Habitual screenshot 4](https://imgur.com/bPTsNf2)
-![Habitual screenshot 5](https://imgur.com/tKEbhFO)
-![Habitual screenshot 6](https://imgur.com/hS3vdlo)
+![Habitual screenshot 1](https://imgur.com/IzCrXnK.jpg)
+![Habitual screenshot 2](https://imgur.com/iBd2CMc.jpg)
+![Habitual screenshot 3](https://imgur.com/laDvdQ3.jpg)
+![Habitual screenshot 4](https://imgur.com/bPTsNf2.jpg)
+![Habitual screenshot 5](https://imgur.com/tKEbhFO.jpg)
+![Habitual screenshot 6](https://imgur.com/hS3vdlo.jpg)
 
 ## Technologies Used
 
