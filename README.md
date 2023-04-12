@@ -45,8 +45,8 @@ npm run dev
 
 ## Screenshots
 
-![Habitual screenshot 1](https://link-to-your-screenshot-1.png)
-![Habitual screenshot 2](https://link-to-your-screenshot-2.png)
+![Habitual screenshot 1](https://photos.app.goo.gl/2WEgwGQZQgWYzNwv6)
+![Habitual screenshot 2](https://photos.app.goo.gl/2WEgwGQZQgWYzNwv6)
 
 ## Technologies Used
 
