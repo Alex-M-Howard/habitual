@@ -89,10 +89,10 @@ function Habits() {
       const data = { habitId };
       let res;
       if (action === "add") {
-        const res = await axios.post(url, data, { headers });
+        res = await axios.post(url, data, { headers });
       }
       else {
-        const res = await axios.delete(url, { data, headers });
+        res = await axios.delete(url, { data, headers });
       }
       console.log(res);
       
