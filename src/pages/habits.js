@@ -93,6 +93,7 @@ function Habits() {
       else {
         const res = await axios.delete(url, { data, headers });
       }
+      console.log(res);
       
     } catch (err) {
       console.log(err);
