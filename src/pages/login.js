@@ -46,7 +46,6 @@ function Login() {
   };
 
   if (loading) {
-    console.log("loading...");
     return (
       <Grid
         container

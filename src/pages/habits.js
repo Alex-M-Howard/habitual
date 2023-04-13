@@ -89,6 +89,8 @@ function Habits() {
 
 
   async function trackHabit(action, habitId) {
+    if (!user) return null;
+    console.log("trackHabit", action, habitId)
     try {
       const url = `/api/users/${user.id}/tracker`;
       const headers = { Authorization: `Bearer ${token}` };
@@ -100,6 +102,7 @@ function Habits() {
       else {
         res = await axios.delete(url, { data, headers });
       }
+      console.log(res)
       return res.data;
       
     } catch (err) {
@@ -112,7 +115,6 @@ function Habits() {
 
   
   if (!userHabits) {
-    console.log('loading...')
       return (
         <Grid container justifyContent="center" alignItems="center" sx={{height: '50vh'}}>
           <CircularProgress color="text" size='75px'/>

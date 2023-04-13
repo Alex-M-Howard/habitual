@@ -45,7 +45,6 @@ function Insights() {
 
   // TODO - Add streaks
 
-  console.log(userStats)
 
   const renderMostCompletedHabits = () => {
     try {
@@ -201,7 +200,6 @@ function Insights() {
   };
 
   if (!userStats) {
-    console.log("loading...");
     return (
       <Grid
         container

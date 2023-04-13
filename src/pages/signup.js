@@ -49,7 +49,6 @@ function Signup() {
   };
 
   if (loading) {
-    console.log("loading...");
     return (
       <Grid
         container

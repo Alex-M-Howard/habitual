@@ -241,7 +241,6 @@ function Journals() {
   }
 
 if (!journals) {
-  console.log("loading...");
   return (
     <Grid
       container
@@ -254,7 +253,6 @@ if (!journals) {
 }
   
   if (isMobile) {
-    console.log('isMobile')
     return (
       <div>
         <Typography

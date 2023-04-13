@@ -25,7 +25,6 @@ ChartJS.register(
 );
 
 function Graph({ data, options, graphType }) {
-  console.log(graphType);
 
   const chartComponent =
     graphType === "bar" ? (

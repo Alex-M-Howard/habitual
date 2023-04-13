@@ -30,8 +30,12 @@ function NestedList({
     async function getCategories() {
       const url = `/api/habits/categories`;
       const headers = { Authorization: `Bearer ${token}` };
-      const res = await axios.get(url, { headers });
-      return res.data.categories;
+      try {
+        const res = await axios.get(url, { headers });
+        return res.data.categories;
+      } catch (err) {
+        console.log('Error fetching categories', err);
+      }
     }
 
     if (!user) return;
@@ -160,7 +164,6 @@ function NestedList({
   };
 
   if (!categories) {
-      console.log("loading...");
       return (
         <Grid
           container
