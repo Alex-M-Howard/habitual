@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import { Grid, Typography, IconButton, Button, ButtonGroup } from "@mui/material";
+import { useTheme, Grid, Typography, IconButton, Button, ButtonGroup, CircularProgress, useMediaQuery } from "@mui/material";
 import { Delete } from "@mui/icons-material";
 import styles from "@/styles/Journals.module.css";
-const {useTheme} = require("@mui/material/styles");
+
 
 function Journals() {
   const { user, token } = useSelector((store) => store.user.loggedIn);
-  const [journals, setJournals] = useState([]);
+  const [journals, setJournals] = useState(null);
   const [selectedJournal, setSelectedJournal] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editedEntry, setEditedEntry] = useState("");
   const [collapsedMonths, setCollapsedMonths] = useState({});
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
     async function getJournals() {
@@ -151,12 +152,14 @@ function Journals() {
   }
 }
 
+  
+
   function renderSelectedJournal() {
     if (!selectedJournal) {
       return (
         <div>
           <Button variant="outlined" onClick={handleNewEntryButtonClick}>New Entry</Button>
-          <p style={{color: theme.palette.text.main}}>Select a journal from the left pane to view its content.</p>
+          <p style={{ color: theme.palette.text.main }}>{!isMobile ? 'Select a journal from the left pane to view its content.' : 'Select a journal from the top pane to view it\'s contents'}</p>
         </div>
       );
     }
@@ -236,6 +239,47 @@ function Journals() {
       [groupKey]: !collapsedMonths[groupKey],
     });
   }
+
+if (!journals) {
+  console.log("loading...");
+  return (
+    <Grid
+      container
+      justifyContent="center"
+      alignItems="center"
+      sx={{ height: "50vh" }}>
+      <CircularProgress color="text" size="75px" />
+    </Grid>
+  );
+}
+  
+  if (isMobile) {
+    console.log('isMobile')
+    return (
+      <div>
+        <Typography
+          variant="h4"
+          align="center"
+          gutterBottom
+          sx={{ mt: 2, color: theme.palette.text.main }}>
+          Journals
+        </Typography>
+        <Grid container justifyContent="center">
+          <Grid item xs={10} md={8} lg={6}>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={4}>
+                {renderJournalList()}
+              </Grid>
+              <Grid item sx={{mt: 5}} xs={12} md={8}>
+                {renderSelectedJournal()}
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+      </div>
+    );
+  }
+  
 
   return (
     <div>
