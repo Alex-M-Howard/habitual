@@ -365,16 +365,16 @@ class User {
    * Log user habit
    *
    */
-  static async removeLoggedUserHabit({ habitId, userId}) {
+  static async removeLoggedUserHabit({ logId}) {
     let response;
 
     const existanceCheck = await db.query(
       `
       SELECT *
       FROM tracker
-      WHERE habit_id=$1 AND user_id=$2 AND date(day_date)=date(NOW())
+      WHERE id=$1
       `,
-      [habitId, userId]
+      [logId]
     );
 
     if (existanceCheck.rows.length < 1) {
@@ -384,9 +384,9 @@ class User {
     }
     response = await db.query(
       `
-        DELETE FROM tracker WHERE habit_id=$1 AND user_id=$2 AND date(day_date)=date(NOW())
+        DELETE FROM tracker WHERE id=$1
         RETURNING *`,
-      [habitId, userId]
+      [logId]
     );
     return { response: response.rows, message: "Log successfully deleted" };
   }
