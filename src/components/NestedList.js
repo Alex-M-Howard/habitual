@@ -11,7 +11,7 @@ import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import uuid4 from "uuid4";
-import {useTheme} from "@mui/material";
+import {useTheme, CircularProgress, Grid} from "@mui/material";
 
 function NestedList({
   userHabits,
@@ -21,7 +21,7 @@ function NestedList({
   setCustomHabit,
 }) {
   const [open, setOpen] = useState({});
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState(null);
   const [selectedHabitId, setSelectedHabitId] = useState(null);
   const { user, token } = useSelector((store) => store.user.loggedIn);
   const theme = useTheme();
@@ -158,6 +158,20 @@ function NestedList({
       );
     });
   };
+
+  if (!categories) {
+      console.log("loading...");
+      return (
+        <Grid
+          container
+          justifyContent="center"
+          alignItems="center"
+          sx={{ height: "50vh" }}>
+          <CircularProgress color="text" size="75px" />
+        </Grid>
+      );
+    }
+  
 
   return (
     <List

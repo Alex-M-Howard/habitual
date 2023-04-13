@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Form from "@/components/Form";
-import { Alert, AlertTitle, Grid, Typography } from "@mui/material";
+import { Alert, AlertTitle, Grid, Typography, CircularProgress } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import axios from "axios";
@@ -14,6 +14,7 @@ function Login() {
   const dispatch = useDispatch();
   const [hidden, hide] = useMessageTimer(error, 3000);
   const theme = useTheme();
+  const [loading, setLoading] = useState(false);
 
   const fields = [
     { name: "email", label: "Email" },
@@ -28,17 +29,34 @@ function Login() {
   const handleSubmit = async (formData) => {
     if (error) setError(null);
 
+    setLoading(true);
+
     try {
       const { data } = await axios.post("/api/login", formData);
       dispatch({ type: "LOGIN", payload: data });
       dispatch({ type: "SAVE_TO_LOCALSTORAGE", payload: data });
+      
       await router.push("/habits");
     } catch (error) {
+      setLoading(false);
 
       setError(error.response.data.error.message);
       hide(1);
     }
   };
+
+  if (loading) {
+    console.log("loading...");
+    return (
+      <Grid
+        container
+        justifyContent="center"
+        alignItems="center"
+        sx={{ height: "50vh" }}>
+        <CircularProgress color="text" size="75px" />
+      </Grid>
+    );
+  }
 
   return (
     <Grid
