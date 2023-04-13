@@ -28,14 +28,20 @@ const poolConfig = {
       rejectUnauthorized: false,
     },
   }),
-  idle_in_transaction_session_timeout: 1000, // Set this to a lower value, in milliseconds
+  idle_in_transaction_session_timeout: 1000, 
 };
 
 db = new Pool(poolConfig);
 
-db.on("connect", async (client) => {
-  await client.query("SET TIME ZONE 'America/New_York'"); // Replace with your desired timezone
+ddb.on("connect", async (client) => {
+  try {
+    await client.query("SET TIME ZONE 'America/New_York'");
+    console.log("Timezone set to America/New_York successfully");
+  } catch (error) {
+    console.error("Error setting timezone:", error);
+  }
 });
+
 
 module.exports = {
   db,
