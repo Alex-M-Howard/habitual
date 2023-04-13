@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import { Button, Grid, Typography, ButtonGroup, Stack } from "@mui/material";
+import { Grid, CircularProgress, Typography, Button } from "@mui/material";
 import uuid4 from "uuid4";
 import { useTheme } from "@mui/material/styles";
 
@@ -12,7 +12,7 @@ import HabitList from "@/components/HabitList";
 
 function Habits() {
   const { user, token } = useSelector((store) => store.user.loggedIn);
-  const [userHabits, setUserHabits] = useState([]);
+  const [userHabits, setUserHabits] = useState(null);
   const [habitLog, setHabitLog] = useState([]);
   const [customHabit, setCustomHabit] = useState("");
   const [categories, setCategories] = useState([]);
@@ -42,7 +42,8 @@ function Habits() {
       return res.data.log;
     }
 
-    if (!user) return;
+    if (!user) return null;
+
     fetchHabits().then((data) => setUserHabits(data));
     fetchCategories().then((data) => setCategories(data));
     fetchTodayHabitLog().then((data) => setHabitLog(data));
@@ -101,7 +102,15 @@ function Habits() {
     }
   }
 
-  if (!userHabits) return <div>Loading...</div>;
+  
+  if (!userHabits) {
+    console.log('loading...')
+      return (
+        <Grid container justifyContent="center" alignItems="center" sx={{height: '50vh'}}>
+          <CircularProgress color="text" size='75px'/>
+        </Grid>
+      );
+    }
 
   const handleClick = () => {
     setEditMode(false);

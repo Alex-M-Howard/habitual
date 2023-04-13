@@ -2,12 +2,12 @@ import React, { useEffect,useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import Graph from "@/components/Graph";
-import { useTheme, Grid, Box} from "@mui/material";
+import { useTheme, Grid, Box, CircularProgress} from "@mui/material";
 import TimeFrameSelector from "@/components/TimeFrameSelector";
 
 function Insights() {
   const { user, token } = useSelector((store) => store.user.loggedIn);
-  const [userStats, setUserStats] = useState({});
+  const [userStats, setUserStats] = useState(null);
   const theme = useTheme();
   const [selectedTimeFrame, setSelectedTimeFrame] = useState('mostCompletedHabits30');
   const colors = [
@@ -48,7 +48,6 @@ function Insights() {
   console.log(userStats)
 
   const renderMostCompletedHabits = () => {
-    if (!userStats) return <div>Loading...</div>;
     try {
       const labels = userStats[selectedTimeFrame].map(habit => habit.name);
       const data = userStats[selectedTimeFrame].map(habit => habit.count);
@@ -149,7 +148,6 @@ function Insights() {
       return null;
     }
   }
-
   
   const renderCategoriesMostCompleted = () => {
     if (!userStats) return <div>Loading...</div>;
@@ -202,6 +200,18 @@ function Insights() {
     }
   };
 
+  if (!userStats) {
+    console.log("loading...");
+    return (
+      <Grid
+        container
+        justifyContent="center"
+        alignItems="center"
+        sx={{ height: "50vh" }}>
+        <CircularProgress color="text" size="75px" />
+      </Grid>
+    );
+  }
 
   return (
     <Grid
@@ -221,8 +231,8 @@ function Insights() {
 
       <div
         style={{
-          width: "75%",
-          margin: "2rem 0",
+          width: "50%",
+          margin: "5rem 0",
           height: "1px",
           background: `linear-gradient(90deg, ${theme.palette.primary.light} 0%, ${theme.palette.primary.dark} 50%, ${theme.palette.primary.light} 100%)`,
         }}
@@ -234,8 +244,8 @@ function Insights() {
 
       <div
         style={{
-          width: "75%",
-          margin: "2rem 0",
+          width: "50%",
+          margin: "5rem 0",
           height: "1px",
           background: `linear-gradient(90deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.light} 50%, ${theme.palette.primary.dark} 100%)`,
         }}
@@ -244,6 +254,15 @@ function Insights() {
       <Grid item xs={12} md={10} sx={{ width: "100%" }}>
         {renderCategoriesMostCompleted()}
       </Grid>
+
+      <div
+        style={{
+          width: "50%",
+          margin: "5rem 0",
+          height: "1px",
+          background: `linear-gradient(90deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.light} 50%, ${theme.palette.primary.dark} 100%)`,
+        }}
+      />
     </Grid>
   );
 }
