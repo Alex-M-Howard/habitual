@@ -63,12 +63,13 @@ function Habits() {
       data = { habitId, categoryId: 10 };
       headers = { Authorization: `Bearer ${token}` };
       await axios.delete(url, { data, headers });
-    }
+    } else {
 
     url = `/api/habits`;
     headers = { Authorization: `Bearer ${token}` };
     data = { habitId };
     await axios.delete(url, { data, headers });
+    }
     } catch (err) {
       console.log(err);
     }
