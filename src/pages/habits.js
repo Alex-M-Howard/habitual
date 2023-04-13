@@ -90,19 +90,23 @@ function Habits() {
 
   async function trackHabit(action, habitId) {
     if (!user) return null;
-    console.log("trackHabit", action, habitId)
     try {
       const url = `/api/users/${user.id}/tracker`;
       const headers = { Authorization: `Bearer ${token}` };
-      const data = { habitId };
+      let data = { habitId };
       let res;
       if (action === "add") {
         res = await axios.post(url, data, { headers });
       }
       else {
+        habitLog.forEach((log) => {
+          if (log.habitId === habitId) {
+            data = { logId: log.id };
+          }
+        });
+
         res = await axios.delete(url, { data, headers });
       }
-      console.log(res)
       return res.data;
       
     } catch (err) {
