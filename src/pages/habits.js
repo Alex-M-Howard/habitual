@@ -2,8 +2,9 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import { Grid, CircularProgress, Typography, Button } from "@mui/material";
+import { Grid, CircularProgress, Typography, Button, Alert, AlertTitle } from "@mui/material";
 import uuid4 from "uuid4";
+import useMessageTimer from "@/hooks/useAlerts";
 import { useTheme } from "@mui/material/styles";
 
 // Internal Imports
@@ -18,6 +19,10 @@ function Habits() {
   const [categories, setCategories] = useState([]);
   const [addShowing, setAddShowing] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [message, setMessage] = useState(null);
+  const [severity, setSeverity] = useState("success");
+  const [hidden, hide] = useMessageTimer(message, 3000);
+
   const theme = useTheme();
 
   useEffect(() => {
@@ -42,7 +47,7 @@ function Habits() {
       return res.data.log;
     }
 
-    if (!user) return null;
+    if (!user) return;
 
     fetchHabits().then((data) => setUserHabits(data));
     fetchCategories().then((data) => setCategories(data));
@@ -95,10 +100,13 @@ function Habits() {
       else {
         res = await axios.delete(url, { data, headers });
       }
-      console.log(res);
+      return res.data;
       
     } catch (err) {
       console.log(err);
+      setMessage(err['message']);
+      setSeverity("error");
+      hide(1);
     }
   }
 
@@ -150,10 +158,40 @@ function Habits() {
         justifyContent="center"
         alignItems="center"
         sx={{ mt: 3 }}>
+        <div
+          style={{
+            height: "100px",
+            overflow: "hidden",
+            opacity: hidden ? 1 : 0,
+            transition: "opacity 0.3s ease-in-out",
+          }}>
+          <Alert
+            sx={{
+              m: 2,
+              width: "350px",
+              backgroundColor: `${
+                severity === "error"
+                  ? theme.palette.error.main
+                  : theme.palette.success.main
+              }`,
+              color: `${
+                severity === "error"
+                  ? theme.palette.error.secondary
+                  : theme.palette.success.secondary
+              }`,
+            }}
+            severity={severity}>
+            <AlertTitle>Attention</AlertTitle>
+            {message}
+          </Alert>
+        </div>
+
         <Grid item>
-          <Typography variant="h4" sx={{color: theme.palette.text.main}}>Habits</Typography>
+          <Typography variant="h4" sx={{ mt: 3, color: theme.palette.text.main }}>
+            Habits
+          </Typography>
         </Grid>
-        
+
         <HabitList
           userHabits={userHabits}
           editMode={editMode}

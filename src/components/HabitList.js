@@ -33,12 +33,21 @@ useEffect(() => {
 
     if (currentIndex === -1) {
       newChecked.push(value);
-      await trackHabit('add', value);
-    } else {
-      await trackHabit("remove", value);
-      newChecked.splice(currentIndex, 1);
-    }
+      try {
+        const res = await trackHabit('add', value);
+      } catch (err) {
+        console.log(err)
+        newChecked.pop();
+      }
 
+    } else {
+      try {
+        const res = await trackHabit("remove", value);
+        newChecked.splice(currentIndex, 1);
+      } catch (err) {
+        console.log(err)
+      }
+    }
     setChecked(newChecked);
     setLoading(false);
   };
