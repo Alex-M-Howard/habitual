@@ -40,8 +40,8 @@ function AddHabit({
         setUserHabits([...userHabits, { habitId, habitName, frequency: 1 }]);
         setAddShowing(false);
       }
-    } catch (error) {   
-      console.log("Error");
+    } catch (err) {   
+      console.log(err);
     }
   };
 
@@ -52,13 +52,12 @@ function AddHabit({
 
     const res = await axios.post(url, data, { headers });
 
-    if (res.status === 200) {
+    try{
       await addHabitToUser(res.data.habits.id);
       await addHabitToOther(res.data.habits.id);
       setAddShowing(false);
-    } else {
-      // TODO - Handle error
-      console.log("Error");
+    } catch(err) {
+      console.log(err);
     }
   };
 
@@ -66,11 +65,12 @@ function AddHabit({
     const data = { habitId, categoryId: OTHER_CATEGORY_ID };
     const url = `/api/habit_categories`;
     const headers = { Authorization: `Bearer ${token}` };
-    const res = await axios.post(url, data, { headers });
 
-    if (res.status === 200) return;
-    // TODO - Handle error
-    console.log("Error");
+    try {
+      const res = await axios.post(url, data, { headers });
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleAdd = async () => {
