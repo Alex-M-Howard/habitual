@@ -33,14 +33,7 @@ const poolConfig = {
 
 db = new Pool(poolConfig);
 
-db.on("connect", async (client) => {
-  try {
-    await client.query("SET TIME ZONE 'America/New_York'");
-    console.log("Timezone set to America/New_York successfully");
-  } catch (error) {
-    console.error("Error setting timezone:", error);
-  }
-});
+db.connect();
 
 
 module.exports = {
