@@ -258,7 +258,7 @@ class User {
       day_date AS "date",
       day_id AS "dayId"  
       FROM tracker
-      WHERE user_id=$1`,
+      WHERE user_id=$1 AND day_date=$2`,
       [userId]
     );
 
@@ -280,6 +280,8 @@ class User {
       return { error: `User: ${userId} not found.` };
     }
 
+    const todayDate = date.format(new Date(), "MM/DD/YYYY");
+
     const userLog = await db.query(
       `
       SELECT 
@@ -289,8 +291,8 @@ class User {
       day_date AS "date",
       day_id AS "dayId"  
       FROM tracker
-      WHERE user_id=$1 AND date(day_date)=CURRENT_DATE`,
-      [userId]
+      WHERE user_id=$1 AND day_date=$2`,
+      [userId, todayDate]
     );
 
     return { log: userLog.rows };
@@ -379,7 +381,7 @@ class User {
 
     if (existanceCheck.rows.length < 1) {
       return {
-        error: `Log: ${id} not found. No operation performed.`,
+        error: `Log: ${logId} not found. No operation performed.`,
       };
     }
     response = await db.query(
