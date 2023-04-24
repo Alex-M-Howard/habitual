@@ -140,7 +140,7 @@ useEffect(() => {
               variant="outlined"
               onClick={() => setEditMode(!editMode)}
               style={{
-                minWidth: "150px", // Set a minimum width for the Remove Habit/Done button
+                minWidth: "150px",
               }}>
               {editMode ? "Done" : "Remove Habit"}
 

@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { Container, Typography, Box, Paper, Grid } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import React from "react";
 
 export default function Home() {
   const theme = useTheme();

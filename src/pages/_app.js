@@ -1,5 +1,5 @@
 // General Imports
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {CacheProvider} from "@emotion/react";
 import createEmotionCache from "@/config/createEmotionCache";
 import rootReducer from "@/redux/rootReducer.js";
