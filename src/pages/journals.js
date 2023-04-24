@@ -29,6 +29,10 @@ function Journals() {
   }, [user]);
 
   function selectJournal(journal) {
+    if (isEditing && selectedJournal && selectedJournal.id !== journal.id) {
+      setIsEditing(false)
+    }
+
     setSelectedJournal(journal);
   }
 
@@ -134,6 +138,7 @@ function Journals() {
     setJournals([newJournal, ...journals]);
     setSelectedJournal(newJournal);
     setIsEditing(true);
+    setEditedEntry("");
   }
 
   async function handleDeleteEntry(journalId) {
