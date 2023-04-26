@@ -2,17 +2,21 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { useTheme, Grid, Typography, IconButton, Button, ButtonGroup, CircularProgress, useMediaQuery } from "@mui/material";
-import { Delete } from "@mui/icons-material";
-import styles from "@/styles/Journals.module.css";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
+
 
 
 function Journals() {
+
+  
+
   const { user, token } = useSelector((store) => store.user.loggedIn);
   const [journals, setJournals] = useState(null);
   const [selectedJournal, setSelectedJournal] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editedEntry, setEditedEntry] = useState("");
-  const [collapsedMonths, setCollapsedMonths] = useState({});
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -28,9 +32,7 @@ function Journals() {
     getJournals().then((data) => setJournals(data));
   }, [user]);
 
-  function selectJournal(journal) {
-    setSelectedJournal(journal);
-  }
+
 
   function formatDate(dateString) {
     const date = new Date(dateString);
@@ -40,53 +42,6 @@ function Journals() {
     return `${month}/${day}/${year}`;
   }
 
-  function renderJournalList() {
-    const groupedJournals = groupJournalsByMonth(
-      journals.sort((a, b) => new Date(b.date) - new Date(a.date))
-    );
-
-    return Object.keys(groupedJournals).map((groupKey) => {
-      const journalsInGroup = groupedJournals[groupKey];
-          return (
-            <div key={groupKey}>
-              <h3
-                onClick={() => toggleMonth(groupKey)}
-                style={{ cursor: "pointer", color: theme.palette.text.main }}>
-                {collapsedMonths[groupKey] ? "▶" : "▼"} {groupKey}
-              </h3>
-              {!collapsedMonths[groupKey] &&
-                journalsInGroup.map((journal) => (
-                  <div
-                    key={journal.id}
-                    onClick={() => selectJournal(journal)}
-                    className={
-                      selectedJournal?.id === journal.id
-                        ? styles.selectedJournal
-                        : ""
-                    }
-                    style={{ display: 'flex', height: '60px', justifyContent: 'space-between', alignItems: 'center', color: theme.palette.text.main}}
-                  >
-                    <h4 style={{ color: theme.palette.text.main }}>
-                      {formatDate(journal.date)}{" "}
-                      <IconButton
-                        edge="end"
-                        color="inherit"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteEntry(journal.id);
-                        }}
-                        style={{ color: theme.palette.accent.alternate}}
-                      >
-                        <Delete />
-                      </IconButton>
-                    </h4>
-                  </div>
-                ))}
-            </div>
-          );
-
-    });
-  }
 
   function handleEditButtonClick() {
     setIsEditing(true);
@@ -94,19 +49,22 @@ function Journals() {
   }
 
   async function handleSaveButtonClick() {
-    const url = `/api/users/${user.id}/journal`;
-    const headers = { Authorization: `Bearer ${token}` };
-    const data = { entry: editedEntry, journalId: selectedJournal.id };
-    await axios.put(url, data, { headers });
+    
+    if (editedEntry !== '') {
+      const url = `/api/users/${user.id}/journal`;
+      const headers = { Authorization: `Bearer ${token}` };
+      const data = { entry: editedEntry, journalId: selectedJournal.id };
+      await axios.put(url, data, { headers });
 
-    const updatedJournals = journals.map((journal) =>
-      journal.id === selectedJournal.id
-        ? { ...selectedJournal, entry: editedEntry }
-        : journal
-    );
-    setJournals(updatedJournals);
-    setSelectedJournal({ ...selectedJournal, entry: editedEntry });
-
+      const updatedJournals = journals.map((journal) =>
+        journal.id === selectedJournal.id
+          ? { ...selectedJournal, entry: editedEntry }
+          : journal
+      );
+      setJournals(updatedJournals);
+      setSelectedJournal({ ...selectedJournal, entry: editedEntry });
+    }
+      
     setIsEditing(false);
   }
 
@@ -134,7 +92,9 @@ function Journals() {
     setJournals([newJournal, ...journals]);
     setSelectedJournal(newJournal);
     setIsEditing(true);
+    setEditedEntry("");
   }
+
 
   async function handleDeleteEntry(journalId) {
     const url = `/api/users/${user.id}/journal`;
@@ -152,93 +112,122 @@ function Journals() {
   }
 }
 
-  
+function handleDateChange(date) {
+  const adapter = new AdapterDayjs();
+  const formattedSelectedDate = adapter.date(date).format("YYYY-MM-DD");
+
+  const newSelectedJournal = journals.find((journal) => {
+    const formattedJournalDate = new Date(journal.date)
+      .toISOString()
+      .split("T")[0];
+    return formattedSelectedDate === formattedJournalDate;
+  });
+
+  if (newSelectedJournal?.id !== selectedJournal?.id) {
+    setIsEditing(false);
+  }
+
+  setSelectedJournal(newSelectedJournal);
+}
+
 
   function renderSelectedJournal() {
     if (!selectedJournal) {
       return (
-        <div>
-          <Button variant="outlined" onClick={handleNewEntryButtonClick}>New Entry</Button>
-          <p style={{ color: theme.palette.text.main }}>{!isMobile ? 'Select a journal from the left pane to view its content.' : 'Select a journal from the top pane to view it\'s contents'}</p>
-        </div>
+        <Grid container justifyContent="center" alignItems='center' direction="column">
+          <Button variant="outlined" onClick={handleNewEntryButtonClick}>
+            New Entry
+          </Button>
+          <p style={{ color: theme.palette.text.main }}>
+            Select a date to view a journal entry
+          </p>
+        </Grid>
       );
     }
 
     return (
-      <div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}>
-          <h2 style={{ color: theme.palette.text.main }}>
+      <Grid
+        container
+        direction="column"
+        justifyContent="center"
+        alignItems="center">
+        <Grid
+          container
+          direction="column"
+          justifyContent="center"
+          alignItems="center">
+          <Typography
+            variant="h4"
+            align="center"
+            style={{ color: theme.palette.text.main }}>
             {formatDate(selectedJournal.date)}
-          </h2>
-          <div>
-            <ButtonGroup
-              variant="outlined"
-              aria-label="text button group">
-              <Button
-                sx={{ width: "125px" }}
-              
-                onClick={handleNewEntryButtonClick}>
-                New Entry
+          </Typography>
+          <ButtonGroup variant="outlined" aria-label="text button group">
+            <Button sx={{ width: "125px" }} onClick={handleNewEntryButtonClick}>
+              New Entry
+            </Button>
+            {isEditing ? (
+              <Button sx={{ width: "125px" }} onClick={handleSaveButtonClick}>
+                Save
               </Button>
-              {isEditing ? (
-                <Button
-                  sx={{ width: "125px" }}
-                  
-                  onClick={handleSaveButtonClick}>
-                  Save
-                </Button>
-              ) : (
-                <Button
-                  sx={{ width: "125px" }}
-                  
-                  onClick={handleEditButtonClick}>
-                  Edit
-                </Button>
-              )}
-            </ButtonGroup>
-          </div>
-        </div>
+            ) : (
+              <Button sx={{ width: "125px" }} onClick={handleEditButtonClick}>
+                Edit
+              </Button>
+            )}
+          </ButtonGroup>
+        </Grid>
         {isEditing ? (
           <textarea
             value={editedEntry}
             onChange={(e) => setEditedEntry(e.target.value)}
             rows="10"
-            style={{ width: "100%" }}
+            style={{ width: isMobile ? "100%" : "50vw", marginTop: "5px" }}
           />
         ) : (
-          <p style={{ color: theme.palette.text.main }}>{selectedJournal.entry}</p>
+            <p
+              style={{
+                color: theme.palette.text.main,
+                width: isMobile ? "100%" : "50vw",
+              }}>
+              {selectedJournal.entry}
+            </p>
         )}
-      </div>
+      </Grid>
     );
   }
 
-  function groupJournalsByMonth(journals) {
-    const groups = {};
-    journals.forEach((journal) => {
-      const date = new Date(journal.date);
-      const month = date.toLocaleString("default", { month: "long" });
-      const year = date.getFullYear();
-      const groupKey = `${month} ${year}`;
 
-      if (!groups[groupKey]) {
-        groups[groupKey] = [];
-      }
-      groups[groupKey].push(journal);
-    });
-    return groups;
-  }
-
-  function toggleMonth(groupKey) {
-    setCollapsedMonths({
-      ...collapsedMonths,
-      [groupKey]: !collapsedMonths[groupKey],
+  function shouldDisableDate(date) {
+    const adapter = new AdapterDayjs();
+    return !journals.some((journal) => {
+      const journalDate = adapter.date(date).format("YYYY-MM-DD");
+      const formattedJournalDate = new Date(journal.date)
+        .toISOString()
+        .split("T")[0];
+      return journalDate === formattedJournalDate;
     });
   }
+
+
+  function renderCalendar() {
+    return (
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <DateCalendar
+          disableFuture={true}
+          shouldDisableDate={shouldDisableDate}
+          onChange={handleDateChange}
+          sx={{
+            color: theme.palette.text.main,
+            "& .MuiDayCalendar-weekDayLabel": {
+              color: theme.palette.text.main
+            },
+          }}
+        />
+      </LocalizationProvider>
+    );
+  }
+
 
 if (!journals) {
   return (
@@ -252,52 +241,27 @@ if (!journals) {
   );
 }
   
-  if (isMobile) {
+  
     return (
-      <div>
+      <Grid container justifyContent="center" direction='column' alignItems='center'>
         <Typography
           variant="h4"
           align="center"
           gutterBottom
-          sx={{ mt: 2, color: theme.palette.text.main }}>
+          sx={{ mt: 2, color: theme.palette.text.main, width: '100vw' }}>
           Journals
         </Typography>
-        <Grid container justifyContent="center">
-          <Grid item xs={10} md={8} lg={6}>
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={4}>
-                {renderJournalList()}
-              </Grid>
-              <Grid item sx={{mt: 5}} xs={12} md={8}>
-                {renderSelectedJournal()}
-              </Grid>
-            </Grid>
-          </Grid>
+
+        <Grid item xs={12} sm={10} md={4}>
+          {renderCalendar()}
         </Grid>
-      </div>
+        <Grid item xs={12} sm={10} md={4}>
+          {renderSelectedJournal()}
+        </Grid>
+      </Grid>
+      
     );
   }
   
-
-  return (
-    <div>
-      <Typography variant="h4" align="center" gutterBottom sx={{mt: 2, color: theme.palette.text.main}}>
-        Journals
-      </Typography>
-      <Grid container justifyContent="center">
-        <Grid item xs={10} md={8} lg={6}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={4}>
-              {renderJournalList()}
-            </Grid>
-            <Grid item xs={12} md={8}>
-              {renderSelectedJournal()}
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
-    </div>
-  );
-}
 
 export default Journals;

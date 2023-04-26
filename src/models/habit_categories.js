@@ -21,6 +21,7 @@ class HabitCategories {
       FROM habit_categories hc
       JOIN habits h ON hc.habit_id=h.id
       JOIN categories c on hc.category_id=c.id
+      WHERE hc.do_not_delete=True
       `
     );
 

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Form from "@/components/Form";
-import { Alert, AlertTitle, Grid, Typography, CircularProgress } from "@mui/material";
+import { Alert, AlertTitle, Grid, Typography, CircularProgress, Button } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import axios from "axios";
@@ -44,6 +44,7 @@ function Login() {
       hide(1);
     }
   };
+
 
   if (loading) {
     return (
@@ -96,12 +97,9 @@ function Login() {
         Try it out:
       </Typography>
 
-      <Typography
-        align="center"
-        variant="h6"
-        sx={{ mt: 5, color: `${theme.palette.text.main}` }}>
-        email: guest@guest.com password: password
-      </Typography>
+      <Button variant='outlined' onClick={() => handleSubmit({email: 'guest@guest.com', password: 'password'})}>
+        Login as Guest
+      </Button>
 
       <Form
         fields={fields}

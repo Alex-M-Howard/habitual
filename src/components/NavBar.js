@@ -97,7 +97,7 @@ function NavBar(props) {
           </ListItem>
         ))}
 
-        <Brightness4Icon onClick={onToggleTheme} />
+        <Brightness4Icon onClick={onToggleTheme} data-testid='theme-toggle'/>
       </List>
     </Box>
   );
@@ -109,30 +109,26 @@ function NavBar(props) {
     <Box sx={{ display: "flex" }}>
       <AppBar component="nav" position="sticky">
         <Toolbar
-          style={{ backgroundColor: `${theme.palette.background.navbar}` }}
-        >
+          style={{ backgroundColor: `${theme.palette.background.navbar}` }}>
           <IconButton
             color="inherit"
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: "none" } }}
-          >
+            sx={{ mr: 2, display: { sm: "none" } }}>
             <MenuIcon />
           </IconButton>
           <Typography
             variant="h6"
             component="div"
-            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
-          >
+            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}>
             <Link
               href="/"
               alt="home"
               style={{
                 textDecoration: "none",
                 color: `${theme.palette.text.navbar}`,
-              }}
-            >
+              }}>
               <Box
                 component="img"
                 src="/logo.png"
@@ -141,7 +137,6 @@ function NavBar(props) {
                   height: "50px",
                   mt: "6px",
                 }}
-
               />
             </Link>
           </Typography>
@@ -151,8 +146,7 @@ function NavBar(props) {
                 href={`/${item.toLowerCase()}`}
                 alt={item}
                 style={{ textDecoration: "none" }}
-                key={uuid4()}
-              >
+                key={uuid4()}>
                 <Button
                   key={item}
                   sx={{
@@ -163,14 +157,16 @@ function NavBar(props) {
                         ? "bold"
                         : "normal"
                     }`,
-                  }}
-                >
+                  }}>
                   {item}
                 </Button>
               </Link>
             ))}
 
-            <Button key="theme-toggle" onClick={onToggleTheme} sx={{backgroundColor: theme.palette.background.navbar}}>
+            <Button
+              key="theme-toggle"
+              onClick={onToggleTheme}
+              sx={{ backgroundColor: theme.palette.background.navbar }}>
               <Brightness4Icon
                 style={{
                   color: `${theme.palette.text.navbar}`,
@@ -195,8 +191,7 @@ function NavBar(props) {
               boxSizing: "border-box",
               width: drawerWidth,
             },
-          }}
-        >
+          }}>
           {drawer}
         </Drawer>
       </Box>
