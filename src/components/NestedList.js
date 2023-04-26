@@ -77,13 +77,14 @@ function NestedList({
                   key={uuid4()}>
                   <List component="div" disablePadding key={uuid4()}>
                     <ListItemButton
+                      data-testid={`habit-${habit.habitId}`}
                       sx={{
                         pl: 4,
                         "&:hover": {
                           backgroundColor: theme.palette.text.main,
-                           '& .MuiListItemText-primary': {
-        color: theme.palette.text.secondary,
-      },
+                          "& .MuiListItemText-primary": {
+                            color: theme.palette.text.secondary,
+                          },
                         },
                       }}
                       disabled={true}>
@@ -104,6 +105,7 @@ function NestedList({
                   key={uuid4()}>
                   <List component="div" disablePadding key={uuid4()}>
                     <ListItemButton
+                      
                       sx={{
                         pl: 4,
                         backgroundColor: isSelected

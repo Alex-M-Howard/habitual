@@ -69,6 +69,7 @@ useEffect(() => {
                   width: "100%",
                 }}>
                 <ListItemText
+                  id={`habit-label-${habit.habitId}`}
                   style={{
                     minWidth: "250px",
                     textDecoration:
@@ -103,7 +104,7 @@ useEffect(() => {
                       onChange={handleToggle(habit.habitId)}
                       checked={checked.indexOf(habit.habitId) !== -1}
                       inputProps={{
-                        "aria-labelledby": `switch-list-label-${habit.habitId}`,
+                        "aria-labelledby": `habit-label-${habit.habitId}`,
                       }}
                         disabled={loading}
                     />

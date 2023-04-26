@@ -17,6 +17,7 @@ function Form({ fields, initialValues, handleSubmit, buttonText }) {
           value={formData[field.name]}
           type={field.name === "password" ? "password" : "text"}
           onChange={handleChange}
+          placeholder={field.placeholder}
           required
           style={{ width: "350px" }}
           InputProps={{
