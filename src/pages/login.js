@@ -96,10 +96,17 @@ function Login() {
         sx={{ mt: 5, color: `${theme.palette.text.main}` }}>
         Try it out:
       </Typography>
-
+      <Typography
+        align="center"
+        variant="h6"
+        sx={{ m: 2, color: `${theme.palette.text.main}` }}>
+        Previous guest data will be cleansed upon login.
+      </Typography>
       <Button variant='outlined' onClick={() => handleSubmit({email: 'guest@guest.com', password: 'password'})}>
         Login as Guest
       </Button>
+
+
 
       <Form
         fields={fields}

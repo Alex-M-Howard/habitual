@@ -417,6 +417,85 @@ class User {
 
     return { response: `User habit successfully deleted.` };
   }
+
+  /**
+   *
+   * @returns {response: "Guest data successfully deleted"}
+   */
+  static async cleanData() {
+
+    // Delete everything that previous guest might have entered. Then seed generic data in for guest.
+    console.log('cleaning data')
+    const userIdResult = await db.query(`SELECT id FROM users WHERE email = 'guest@guest.com'`);
+    const userId = userIdResult.rows[0].id;
+
+    // Delete existing data
+    await db.query(`DELETE FROM tracker WHERE user_id = $1`, [userId]);
+    await db.query(`DELETE FROM user_habits WHERE user_id = $1`, [userId]);
+    await db.query(`DELETE FROM journals WHERE user_id = $1`, [userId]);
+
+    console.log('deleted data')
+    // Insert default habit data
+    const defaultHabits = [
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+    ];
+
+    for (const habitId of defaultHabits) {
+        await db.query(`INSERT INTO user_habits (user_id, habit_id, frequency) VALUES ($1, $2, 1)`, [userId, habitId]);
+    }
+
+    // Insert default journal entries
+    const defaultJournals = [
+      {
+          date: new Date(),
+          entry: 'Welcome to HabitTracker! This is a demo journal entry. Feel free to delete it and add your own!'
+        },
+        {
+            date: new Date(),
+            entry: 'HabitTracker is a simple app to help you track your habits. You can add habits, log them, and view your progress. You can also add journal entries to keep track of your thoughts and feelings. Feel free to delete this journal entry and add your own!'
+        }
+    ];
+
+    for (const journal of defaultJournals) {
+        await db.query(`INSERT INTO journals (user_id, date, entry) VALUES ($1, $2, $3)`, [userId, journal.date, journal.entry]);
+    }
+
+    const currentDate = new Date();
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(currentDate.getFullYear() - 1);
+
+    const completedHabits = [];
+    for (let i = 0; i < 75; i++) {
+      const randomDate = new Date(oneYearAgo.getTime() + Math.random() * (currentDate.getTime() - oneYearAgo.getTime()));
+      const habitId = Math.floor(Math.random() * 10) + 1; // Random habit ID between 1 and 10
+
+      completedHabits.push({
+          userId,
+          habitId,
+          date: randomDate
+      });
+  }
+
+  for (const habitEntry of completedHabits) {
+    const dateOptions = { weekday: 'long' };
+    const dayName = habitEntry.date.toLocaleString('en-US', dateOptions);
+
+    let dayIdResult = await db.query('SELECT id FROM days WHERE name = $1', [dayName]);
+    let dayId = dayIdResult.rows[0].id;
+
+    db.query(
+        `
+        INSERT INTO tracker (user_id, habit_id, day_date, day_id, complete)
+        VALUES ($1, $2, $3, $4, true)
+        RETURNING *`,
+        [habitEntry.userId, habitEntry.habitId, habitEntry.date, dayId]
+    );
+}
+
+
+    return { response: 'Guest Data Scrubbed' };
+}
+
 }
 
 module.exports = User;

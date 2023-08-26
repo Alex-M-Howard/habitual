@@ -16,6 +16,11 @@ export default async function handler(req, res) {
 
         const user = await User.authenticate(req.body);
         const token = createToken(user);
+
+        if (user.email === "guest@guest.com") {
+          await User.cleanData();
+        }
+
         return res.status(201).json({ user, token });
       } catch (error) {
         return res.status(400).json({ error });
