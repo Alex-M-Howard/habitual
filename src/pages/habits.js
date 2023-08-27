@@ -18,6 +18,9 @@ import { useTheme } from "@mui/material/styles";
 import AddHabit from "@/components/AddHabit";
 import HabitList from "@/components/HabitList";
 
+const maxDefaultHabitId = 23;
+const maxDefaultCategoryId = 10;
+
 function Habits() {
   const { user, token } = useSelector((store) => store.user.loggedIn);
   const [userHabits, setUserHabits] = useState(null);
@@ -32,6 +35,7 @@ function Habits() {
 
   const theme = useTheme();
 
+  // Fetch user habits and habit categories on page load
   useEffect(() => {
     async function fetchHabits() {
       const url = `/api/users/${user.id}/habits`;
@@ -61,13 +65,14 @@ function Habits() {
     fetchTodayHabitLog().then((data) => setHabitLog(data));
   }, [user]);
 
+  // Delete habit from DB if it is a custom habit
   async function removeHabitFromDB(habitId) {
     try {
       let url, data, headers;
 
-      if (habitId > 23) {
+      if (habitId > maxDefaultCategoryId) {
         url = `/api/habit_categories/`;
-        data = { habitId, categoryId: 10 };
+        data = { habitId, categoryId: maxDefaultCategoryId };
         headers = { Authorization: `Bearer ${token}` };
         await axios.delete(url, { data, headers });
       } else {
@@ -81,6 +86,7 @@ function Habits() {
     }
   }
 
+  // Remove habit from user's habit list
   async function removeHabitFromUserHabits(habitId) {
     try {
       let url = `/api/users/${user.id}/habits`;
@@ -93,6 +99,7 @@ function Habits() {
     }
   }
 
+  // Mark habit as completed for today
   async function trackHabit(action, habitId) {
     if (!user) return null;
     try {
@@ -120,6 +127,7 @@ function Habits() {
     }
   }
 
+  // Render loading spinner if userHabits is null
   if (!userHabits) {
     return (
       <Grid

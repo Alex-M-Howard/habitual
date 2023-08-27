@@ -54,6 +54,7 @@ function Signup() {
     }
   };
 
+  // Loading Spinner
   if (loading) {
     return (
       <Grid

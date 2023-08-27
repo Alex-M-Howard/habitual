@@ -13,6 +13,7 @@ import {
 } from "chart.js";
 import { Bar, Line } from "react-chartjs-2";
 
+// Register necessary Chart.js components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -25,7 +26,7 @@ ChartJS.register(
 );
 
 function Graph({ data, options, graphType }) {
-
+  // Determine which type of chart component to render based on graphType prop
   const chartComponent =
     graphType === "bar" ? (
       <Bar options={options} data={data} />
@@ -34,6 +35,7 @@ function Graph({ data, options, graphType }) {
     );
 
   return (
+    // Container for the chart component
     <Box width="100%" height="400px" display="flex" justifyContent="center">
       {chartComponent}
     </Box>

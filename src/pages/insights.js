@@ -25,6 +25,7 @@ function Insights() {
     "#92f183",
   ];
 
+  // Map data to colors for graph
   const mapDataToColors = (data, colors) => {
     return data.map((_, index) => colors[index % colors.length]);
   };
@@ -33,6 +34,7 @@ function Insights() {
     setSelectedTimeFrame(newValue);
   };
 
+  // Get user stats
   useEffect(() => {
     async function fetchUserStats() {
       const url = `/api/data/${user.id}`;
@@ -196,6 +198,7 @@ function Insights() {
     }
   };
 
+  // Loading Spinner
   if (!userStats) {
     return (
       <Grid

@@ -24,6 +24,7 @@ function Journals() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
+  // Get all journals for user
   useEffect(() => {
     async function getJournals() {
       const url = `/api/users/${user.id}/journal`;
@@ -36,6 +37,7 @@ function Journals() {
     getJournals().then((data) => setJournals(data));
   }, [user]);
 
+  // Handles date formatting
   function formatDate(dateString) {
     const date = new Date(dateString);
     const month = ("0" + (date.getMonth() + 1)).slice(-2);
@@ -71,12 +73,14 @@ function Journals() {
   async function handleNewEntryButtonClick() {
     if (isEditing) setIsEditing(false);
 
+    // Check if journal entry already exists for today
     const existingJournal = journals.find((journal) => {
       const today = new Date();
       const journalDate = new Date(journal.date);
       return today.toDateString() === journalDate.toDateString();
     });
 
+    // If journal entry exists, set it as the selected journal and set isEditing to true
     if (existingJournal) {
       setSelectedJournal(existingJournal);
       setIsEditing(true);
@@ -95,6 +99,7 @@ function Journals() {
     setEditedEntry("");
   }
 
+  // Deletes journal entry
   async function handleDeleteEntry(journalId) {
     const url = `/api/users/${user.id}/journal`;
     const data = { id: journalId };
@@ -111,6 +116,7 @@ function Journals() {
     }
   }
 
+  // Handles date selection
   function handleDateChange(date) {
     const adapter = new AdapterDayjs();
     const formattedSelectedDate = adapter.date(date).format("YYYY-MM-DD");
@@ -129,6 +135,7 @@ function Journals() {
     setSelectedJournal(newSelectedJournal);
   }
 
+  // Renders selected journal entry
   function renderSelectedJournal() {
     if (!selectedJournal) {
       return (
@@ -204,6 +211,7 @@ function Journals() {
     );
   }
 
+  // Disables dates that do not have a journal entry
   function shouldDisableDate(date) {
     const adapter = new AdapterDayjs();
     return !journals.some((journal) => {
@@ -215,6 +223,7 @@ function Journals() {
     });
   }
 
+  // Renders calendar component
   function renderCalendar() {
     return (
       <LocalizationProvider dateAdapter={AdapterDayjs}>
