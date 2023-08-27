@@ -19,17 +19,20 @@ export default async function handler(req, res) {
   // Request Method Switch
   switch (req.method) {
     case "GET":
-      const user = {}
+      const user = {};
       try {
-
         user.mostCompletedHabits = await Data.getMostCompletedHabit(req.query);
-        user.habitsCompletedByDay = await Data.getHabitsCompletedByDay(req.query);
-        user.habitCategoryMostCompleted = await Data.getHabitCategoryMostCompleted(req.query);
+        user.habitsCompletedByDay = await Data.getHabitsCompletedByDay(
+          req.query
+        );
+        user.habitCategoryMostCompleted =
+          await Data.getHabitCategoryMostCompleted(req.query);
         user.streaks = await Data.getUserStreaks(req.query);
 
         // Get most completed habits by interval
         for (let i = 0; i < intervals.length; i++) {
-          user[`mostCompletedHabits${intervals[i]}`] = await Data.getMostCompletedHabits(req.query, intervals[i]);
+          user[`mostCompletedHabits${intervals[i]}`] =
+            await Data.getMostCompletedHabits(req.query, intervals[i]);
         }
 
         return res.status(200).json(user);

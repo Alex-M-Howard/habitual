@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import { useTheme, Grid, Typography, IconButton, Button, ButtonGroup, CircularProgress, useMediaQuery } from "@mui/material";
+import {
+  useTheme,
+  Grid,
+  Typography,
+  IconButton,
+  Button,
+  ButtonGroup,
+  CircularProgress,
+  useMediaQuery,
+} from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 
-
-
 function Journals() {
-
-  
-
   const { user, token } = useSelector((store) => store.user.loggedIn);
   const [journals, setJournals] = useState(null);
   const [selectedJournal, setSelectedJournal] = useState(null);
@@ -32,8 +36,6 @@ function Journals() {
     getJournals().then((data) => setJournals(data));
   }, [user]);
 
-
-
   function formatDate(dateString) {
     const date = new Date(dateString);
     const month = ("0" + (date.getMonth() + 1)).slice(-2);
@@ -42,15 +44,13 @@ function Journals() {
     return `${month}/${day}/${year}`;
   }
 
-
   function handleEditButtonClick() {
     setIsEditing(true);
     setEditedEntry(selectedJournal.entry);
   }
 
   async function handleSaveButtonClick() {
-    
-    if (editedEntry !== '') {
+    if (editedEntry !== "") {
       const url = `/api/users/${user.id}/journal`;
       const headers = { Authorization: `Bearer ${token}` };
       const data = { entry: editedEntry, journalId: selectedJournal.id };
@@ -64,13 +64,13 @@ function Journals() {
       setJournals(updatedJournals);
       setSelectedJournal({ ...selectedJournal, entry: editedEntry });
     }
-      
+
     setIsEditing(false);
   }
 
   async function handleNewEntryButtonClick() {
     if (isEditing) setIsEditing(false);
-    
+
     const existingJournal = journals.find((journal) => {
       const today = new Date();
       const journalDate = new Date(journal.date);
@@ -95,46 +95,49 @@ function Journals() {
     setEditedEntry("");
   }
 
-
   async function handleDeleteEntry(journalId) {
     const url = `/api/users/${user.id}/journal`;
-    const data = { id: journalId}
-  const headers = { Authorization: `Bearer ${token}` };
-  await axios.delete(url, { data, headers });
+    const data = { id: journalId };
+    const headers = { Authorization: `Bearer ${token}` };
+    await axios.delete(url, { data, headers });
 
-  const updatedJournals = journals.filter(
-    (journal) => journal.id !== journalId
-  );
-  setJournals(updatedJournals);
+    const updatedJournals = journals.filter(
+      (journal) => journal.id !== journalId
+    );
+    setJournals(updatedJournals);
 
-  if (selectedJournal?.id === journalId) {
-    setSelectedJournal(null);
-  }
-}
-
-function handleDateChange(date) {
-  const adapter = new AdapterDayjs();
-  const formattedSelectedDate = adapter.date(date).format("YYYY-MM-DD");
-
-  const newSelectedJournal = journals.find((journal) => {
-    const formattedJournalDate = new Date(journal.date)
-      .toISOString()
-      .split("T")[0];
-    return formattedSelectedDate === formattedJournalDate;
-  });
-
-  if (newSelectedJournal?.id !== selectedJournal?.id) {
-    setIsEditing(false);
+    if (selectedJournal?.id === journalId) {
+      setSelectedJournal(null);
+    }
   }
 
-  setSelectedJournal(newSelectedJournal);
-}
+  function handleDateChange(date) {
+    const adapter = new AdapterDayjs();
+    const formattedSelectedDate = adapter.date(date).format("YYYY-MM-DD");
 
+    const newSelectedJournal = journals.find((journal) => {
+      const formattedJournalDate = new Date(journal.date)
+        .toISOString()
+        .split("T")[0];
+      return formattedSelectedDate === formattedJournalDate;
+    });
+
+    if (newSelectedJournal?.id !== selectedJournal?.id) {
+      setIsEditing(false);
+    }
+
+    setSelectedJournal(newSelectedJournal);
+  }
 
   function renderSelectedJournal() {
     if (!selectedJournal) {
       return (
-        <Grid container justifyContent="center" alignItems='center' direction="column">
+        <Grid
+          container
+          justifyContent="center"
+          alignItems="center"
+          direction="column"
+        >
           <Button variant="outlined" onClick={handleNewEntryButtonClick}>
             New Entry
           </Button>
@@ -150,16 +153,19 @@ function handleDateChange(date) {
         container
         direction="column"
         justifyContent="center"
-        alignItems="center">
+        alignItems="center"
+      >
         <Grid
           container
           direction="column"
           justifyContent="center"
-          alignItems="center">
+          alignItems="center"
+        >
           <Typography
             variant="h4"
             align="center"
-            style={{ color: theme.palette.text.main }}>
+            style={{ color: theme.palette.text.main }}
+          >
             {formatDate(selectedJournal.date)}
           </Typography>
           <ButtonGroup variant="outlined" aria-label="text button group">
@@ -185,18 +191,18 @@ function handleDateChange(date) {
             style={{ width: isMobile ? "100%" : "50vw", marginTop: "5px" }}
           />
         ) : (
-            <p
-              style={{
-                color: theme.palette.text.main,
-                width: isMobile ? "100%" : "50vw",
-              }}>
-              {selectedJournal.entry}
-            </p>
+          <p
+            style={{
+              color: theme.palette.text.main,
+              width: isMobile ? "100%" : "50vw",
+            }}
+          >
+            {selectedJournal.entry}
+          </p>
         )}
       </Grid>
     );
   }
-
 
   function shouldDisableDate(date) {
     const adapter = new AdapterDayjs();
@@ -209,7 +215,6 @@ function handleDateChange(date) {
     });
   }
 
-
   function renderCalendar() {
     return (
       <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -220,7 +225,7 @@ function handleDateChange(date) {
           sx={{
             color: theme.palette.text.main,
             "& .MuiDayCalendar-weekDayLabel": {
-              color: theme.palette.text.main
+              color: theme.palette.text.main,
             },
           }}
         />
@@ -228,40 +233,43 @@ function handleDateChange(date) {
     );
   }
 
+  if (!journals) {
+    return (
+      <Grid
+        container
+        justifyContent="center"
+        alignItems="center"
+        sx={{ height: "50vh" }}
+      >
+        <CircularProgress color="text" size="75px" />
+      </Grid>
+    );
+  }
 
-if (!journals) {
   return (
     <Grid
       container
       justifyContent="center"
+      direction="column"
       alignItems="center"
-      sx={{ height: "50vh" }}>
-      <CircularProgress color="text" size="75px" />
+    >
+      <Typography
+        variant="h4"
+        align="center"
+        gutterBottom
+        sx={{ mt: 2, color: theme.palette.text.main, width: "100vw" }}
+      >
+        Journals
+      </Typography>
+
+      <Grid item xs={12} sm={10} md={4}>
+        {renderCalendar()}
+      </Grid>
+      <Grid item xs={12} sm={10} md={4}>
+        {renderSelectedJournal()}
+      </Grid>
     </Grid>
   );
 }
-  
-  
-    return (
-      <Grid container justifyContent="center" direction='column' alignItems='center'>
-        <Typography
-          variant="h4"
-          align="center"
-          gutterBottom
-          sx={{ mt: 2, color: theme.palette.text.main, width: '100vw' }}>
-          Journals
-        </Typography>
-
-        <Grid item xs={12} sm={10} md={4}>
-          {renderCalendar()}
-        </Grid>
-        <Grid item xs={12} sm={10} md={4}>
-          {renderSelectedJournal()}
-        </Grid>
-      </Grid>
-      
-    );
-  }
-  
 
 export default Journals;

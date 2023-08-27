@@ -8,7 +8,7 @@ import axios from "axios";
 
 function Profile() {
   const [message, setMessage] = useState(null);
-  const [severity, setSeverity] = useState('success');
+  const [severity, setSeverity] = useState("success");
   const [hidden, hide] = useMessageTimer(message, 3000);
   const { user, token } = useSelector((store) => store.user.loggedIn);
   const theme = useTheme();
@@ -33,8 +33,8 @@ function Profile() {
   const handleSubmit = async (formData) => {
     if (message) setMessage(null);
 
-    if (user.email === 'guest@guest.com') {
-      formData.email = 'guest@guest.com';
+    if (user.email === "guest@guest.com") {
+      formData.email = "guest@guest.com";
     }
 
     try {
@@ -48,15 +48,21 @@ function Profile() {
         lastName: formData.lastName,
         email: formData.email,
       };
-      
-      dispatch({ type: "LOGIN", payload: { user:updatedUser, token } });
-      dispatch({ type: "SAVE_TO_LOCALSTORAGE", payload: { user: updatedUser, token } });      
+
+      dispatch({ type: "LOGIN", payload: { user: updatedUser, token } });
+      dispatch({
+        type: "SAVE_TO_LOCALSTORAGE",
+        payload: { user: updatedUser, token },
+      });
 
       setMessage("Profile Updated");
       setSeverity("success");
       hide(1);
     } catch (error) {
-      if (error.response.data.errors.includes('instance.email does not conform to the "email" format')
+      if (
+        error.response.data.errors.includes(
+          'instance.email does not conform to the "email" format'
+        )
       ) {
         error.response.data.errors.message = "Email is not in correct format";
       }
@@ -73,14 +79,16 @@ function Profile() {
       container
       direction="column"
       justifyContent="center"
-      alignItems="center">
+      alignItems="center"
+    >
       <div
         style={{
           height: "100px",
           overflow: "hidden",
           opacity: hidden ? 1 : 0,
           transition: "opacity 0.3s ease-in-out",
-        }}>
+        }}
+      >
         <Alert
           sx={{
             m: 2,
@@ -96,7 +104,8 @@ function Profile() {
                 : theme.palette.success.secondary
             }`,
           }}
-          severity={severity}>
+          severity={severity}
+        >
           <AlertTitle>Attention</AlertTitle>
           {message}
         </Alert>
@@ -104,7 +113,8 @@ function Profile() {
       <Typography
         align="center"
         variant="h4"
-        sx={{ mt: 5, color: theme.palette.text.main }}>
+        sx={{ mt: 5, color: theme.palette.text.main }}
+      >
         {`${user.firstName}'s`} Profile
       </Typography>
 

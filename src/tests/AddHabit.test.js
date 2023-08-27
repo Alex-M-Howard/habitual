@@ -78,7 +78,6 @@ describe("AddHabit component", () => {
     );
   });
 
-  
   it("renders Add Habit and Cancel buttons", () => {
     const addHabitButton = screen.getByText("Add Habit");
     const cancelButton = screen.getByText("Cancel");

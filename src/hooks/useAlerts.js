@@ -1,3 +1,5 @@
+/* Used to show alerts on the page */
+
 import { useEffect, useState } from "react";
 
 function useMessageTimer(initialState = null, delay = 2500) {

@@ -1,3 +1,10 @@
+/*
+  * Middleware for handling authentication and authorization.
+    - authenticateJWT: Used to authenticate a user based on a JWT.
+    - ensureLoggedIn: Used to ensure a user is logged in.
+    - ensureCorrectUser: Used to ensure a user is logged in and is the correct user.
+*/
+
 "use strict";
 
 /** Convenience middleware to handle common auth cases in routes. */
@@ -26,7 +33,7 @@ function authenticateJWT(token) {
 function ensureLoggedIn(req) {
   let token;
 
-  for (let i = 0; i < req.rawHeaders.length - 1; i++){
+  for (let i = 0; i < req.rawHeaders.length - 1; i++) {
     if (req.rawHeaders[i].toLowerCase() === "authorization") {
       token = req.rawHeaders[i + 1];
       break;

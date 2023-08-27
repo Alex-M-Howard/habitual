@@ -2,7 +2,14 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import { Grid, CircularProgress, Typography, Button, Alert, AlertTitle } from "@mui/material";
+import {
+  Grid,
+  CircularProgress,
+  Typography,
+  Button,
+  Alert,
+  AlertTitle,
+} from "@mui/material";
 import uuid4 from "uuid4";
 import useMessageTimer from "@/hooks/useAlerts";
 import { useTheme } from "@mui/material/styles";
@@ -55,39 +62,36 @@ function Habits() {
   }, [user]);
 
   async function removeHabitFromDB(habitId) {
-    try{
-    let url, data, headers;
+    try {
+      let url, data, headers;
 
-    if (habitId > 23) {
-      url = `/api/habit_categories/`;
-      data = { habitId, categoryId: 10 };
-      headers = { Authorization: `Bearer ${token}` };
-      await axios.delete(url, { data, headers });
-    } else {
-
-    url = `/api/habits`;
-    headers = { Authorization: `Bearer ${token}` };
-    data = { habitId };
-    await axios.delete(url, { data, headers });
-    }
+      if (habitId > 23) {
+        url = `/api/habit_categories/`;
+        data = { habitId, categoryId: 10 };
+        headers = { Authorization: `Bearer ${token}` };
+        await axios.delete(url, { data, headers });
+      } else {
+        url = `/api/habits`;
+        headers = { Authorization: `Bearer ${token}` };
+        data = { habitId };
+        await axios.delete(url, { data, headers });
+      }
     } catch (err) {
       console.log(err);
     }
   }
-
 
   async function removeHabitFromUserHabits(habitId) {
     try {
-    let url = `/api/users/${user.id}/habits`;
-    let headers = { Authorization: `Bearer ${token}` };
-    let data = { habitId };
-    await axios.delete(url, { data, headers });
-    setUserHabits(userHabits.filter((habit) => habit.habitId !== habitId));
+      let url = `/api/users/${user.id}/habits`;
+      let headers = { Authorization: `Bearer ${token}` };
+      let data = { habitId };
+      await axios.delete(url, { data, headers });
+      setUserHabits(userHabits.filter((habit) => habit.habitId !== habitId));
     } catch (err) {
       console.log(err);
     }
   }
-
 
   async function trackHabit(action, habitId) {
     if (!user) return null;
@@ -98,8 +102,7 @@ function Habits() {
       let res;
       if (action === "add") {
         res = await axios.post(url, data, { headers });
-      }
-      else {
+      } else {
         habitLog.forEach((log) => {
           if (log.habitId === habitId) {
             data = { logId: log.id };
@@ -109,23 +112,26 @@ function Habits() {
         res = await axios.delete(url, { data, headers });
       }
       return res.data;
-      
     } catch (err) {
       console.log(err);
-      setMessage(err['message']);
+      setMessage(err["message"]);
       setSeverity("error");
       hide(1);
     }
   }
 
-  
   if (!userHabits) {
-      return (
-        <Grid container justifyContent="center" alignItems="center" sx={{height: '50vh'}}>
-          <CircularProgress color="text" size='75px'/>
-        </Grid>
-      );
-    }
+    return (
+      <Grid
+        container
+        justifyContent="center"
+        alignItems="center"
+        sx={{ height: "50vh" }}
+      >
+        <CircularProgress color="text" size="75px" />
+      </Grid>
+    );
+  }
 
   const handleClick = () => {
     setEditMode(false);
@@ -164,14 +170,16 @@ function Habits() {
         direction="column"
         justifyContent="center"
         alignItems="center"
-        sx={{ mt: 3 }}>
+        sx={{ mt: 3 }}
+      >
         <div
           style={{
             height: "100px",
             overflow: "hidden",
             opacity: hidden ? 1 : 0,
             transition: "opacity 0.3s ease-in-out",
-          }}>
+          }}
+        >
           <Alert
             sx={{
               m: 2,
@@ -187,14 +195,18 @@ function Habits() {
                   : theme.palette.success.secondary
               }`,
             }}
-            severity={severity}>
+            severity={severity}
+          >
             <AlertTitle>Attention</AlertTitle>
             {message}
           </Alert>
         </div>
 
         <Grid item>
-          <Typography variant="h4" sx={{ mt: 3, color: theme.palette.text.main }}>
+          <Typography
+            variant="h4"
+            sx={{ mt: 3, color: theme.palette.text.main }}
+          >
             Habits
           </Typography>
         </Grid>

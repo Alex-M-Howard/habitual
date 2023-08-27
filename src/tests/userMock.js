@@ -15,5 +15,4 @@ const store = mockStore({
   },
 });
 
-
 export default store;

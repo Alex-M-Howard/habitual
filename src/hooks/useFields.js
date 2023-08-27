@@ -1,3 +1,5 @@
+/* Used for form input */
+
 import React, { useState } from "react";
 
 const useFields = (initialState) => {

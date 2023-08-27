@@ -3,7 +3,6 @@ import User from "@/models/user";
 
 const jsonschema = require("jsonschema");
 
-
 export default async function handler(req, res) {
   let token, user, response, validator;
 
@@ -24,7 +23,6 @@ export default async function handler(req, res) {
 
       if (response.error) return res.status(400).json(response);
       return res.status(200).json(response);
-
 
     default:
       return res.status(405).json({ error: "Method not allowed" });

@@ -28,13 +28,12 @@ const poolConfig = {
       rejectUnauthorized: false,
     },
   }),
-  idle_in_transaction_session_timeout: 1000, 
+  idle_in_transaction_session_timeout: 1000,
 };
 
 db = new Pool(poolConfig);
 
 db.connect();
-
 
 module.exports = {
   db,

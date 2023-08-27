@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import Form from "@/components/Form";
-import { Alert, AlertTitle, Grid, Typography, CircularProgress, Button } from "@mui/material";
+import {
+  Alert,
+  AlertTitle,
+  Grid,
+  Typography,
+  CircularProgress,
+  Button,
+} from "@mui/material";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import axios from "axios";
@@ -35,7 +42,7 @@ function Login() {
       const { data } = await axios.post("/api/login", formData);
       dispatch({ type: "LOGIN", payload: data });
       dispatch({ type: "SAVE_TO_LOCALSTORAGE", payload: data });
-      
+
       await router.push("/habits");
     } catch (error) {
       setLoading(false);
@@ -45,14 +52,14 @@ function Login() {
     }
   };
 
-
   if (loading) {
     return (
       <Grid
         container
         justifyContent="center"
         alignItems="center"
-        sx={{ height: "50vh" }}>
+        sx={{ height: "50vh" }}
+      >
         <CircularProgress color="text" size="75px" />
       </Grid>
     );
@@ -63,14 +70,16 @@ function Login() {
       container
       direction="column"
       justifyContent="center"
-      alignItems="center">
+      alignItems="center"
+    >
       <div
         style={{
           height: "150px",
           overflow: "hidden",
           opacity: hidden ? 1 : 0,
           transition: "opacity 0.3s ease-in-out",
-        }}>
+        }}
+      >
         <Alert
           sx={{
             m: 2,
@@ -78,7 +87,8 @@ function Login() {
             backgroundColor: `${theme.palette.error.main}`,
             color: `${theme.palette.error.secondary}`,
           }}
-          severity="error">
+          severity="error"
+        >
           <AlertTitle>Error</AlertTitle>
           {error}
         </Alert>
@@ -86,27 +96,33 @@ function Login() {
       <Typography
         align="center"
         variant="h3"
-        sx={{ mt: 5, color: `${theme.palette.text.main}` }}>
+        sx={{ mt: 5, color: `${theme.palette.text.main}` }}
+      >
         Login
       </Typography>
 
       <Typography
         align="center"
         variant="h6"
-        sx={{ mt: 5, color: `${theme.palette.text.main}` }}>
+        sx={{ mt: 5, color: `${theme.palette.text.main}` }}
+      >
         Try it out:
       </Typography>
       <Typography
         align="center"
         variant="h6"
-        sx={{ m: 2, color: `${theme.palette.text.main}` }}>
+        sx={{ m: 2, color: `${theme.palette.text.main}` }}
+      >
         Previous guest data will be cleansed upon login.
       </Typography>
-      <Button variant='outlined' onClick={() => handleSubmit({email: 'guest@guest.com', password: 'password'})}>
+      <Button
+        variant="outlined"
+        onClick={() =>
+          handleSubmit({ email: "guest@guest.com", password: "password" })
+        }
+      >
         Login as Guest
       </Button>
-
-
 
       <Form
         fields={fields}
@@ -117,12 +133,14 @@ function Login() {
       <Typography
         align="center"
         variant="subtitle1"
-        sx={{ mt: 1, color: `${theme.palette.text.main}` }}>
+        sx={{ mt: 1, color: `${theme.palette.text.main}` }}
+      >
         New user?{" "}
         <Link
           href="/signup"
           underline="hover"
-          color={`${theme.palette.text.main}`}>
+          color={`${theme.palette.text.main}`}
+        >
           Sign up
         </Link>
       </Typography>

@@ -1,16 +1,16 @@
 // General Imports
-import React, {useEffect, useState} from "react";
-import {CacheProvider} from "@emotion/react";
+import React, { useEffect, useState } from "react";
+import { CacheProvider } from "@emotion/react";
 import createEmotionCache from "@/config/createEmotionCache";
 import rootReducer from "@/redux/rootReducer.js";
-import {Provider} from "react-redux";
-import {configureStore} from "@reduxjs/toolkit";
-import {darkTheme, lightTheme} from "@/config/theme";
-import {NoSsr} from "@mui/material";
+import { Provider } from "react-redux";
+import { configureStore } from "@reduxjs/toolkit";
+import { darkTheme, lightTheme } from "@/config/theme";
+import { NoSsr } from "@mui/material";
 import UserAuth from "@/components/UserAuth";
 
 // MaterialUI Imports
-import {ThemeProvider} from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";

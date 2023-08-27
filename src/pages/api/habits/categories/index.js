@@ -23,8 +23,6 @@ export default async function handler(req, res) {
       response = await Categories.findAll();
       return res.status(200).json(response);
 
-    
-    
     case "POST":
       validator = jsonschema.validate(req.body, categoriesNewSchema);
 
@@ -38,8 +36,6 @@ export default async function handler(req, res) {
       if (response.error) return res.status(400).json(response);
       return res.status(200).json(response);
 
-    
-    
     case "DELETE":
       validator = jsonschema.validate(req.body, categoriesDeleteSchema);
 

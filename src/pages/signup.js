@@ -2,7 +2,13 @@ import React, { useState } from "react";
 import Form from "@/components/Form";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { Alert, AlertTitle, Grid, Typography, CircularProgress } from "@mui/material";
+import {
+  Alert,
+  AlertTitle,
+  Grid,
+  Typography,
+  CircularProgress,
+} from "@mui/material";
 import { useRouter } from "next/router";
 import useMessageTimer from "@/hooks/useAlerts";
 import { useTheme } from "@mui/material/styles";
@@ -38,7 +44,7 @@ function Signup() {
     try {
       const { data } = await axios.post("/api/signup", formData);
       dispatch({ type: "LOGIN", payload: data });
-      dispatch({ type: "SAVE_TO_LOCALSTORAGE", payload: data })
+      dispatch({ type: "SAVE_TO_LOCALSTORAGE", payload: data });
       setLoading(false);
       await router.push("/");
     } catch (error) {
@@ -54,7 +60,8 @@ function Signup() {
         container
         justifyContent="center"
         alignItems="center"
-        sx={{ height: "50vh" }}>
+        sx={{ height: "50vh" }}
+      >
         <CircularProgress color="text" size="75px" />
       </Grid>
     );
@@ -65,21 +72,24 @@ function Signup() {
       container
       direction="column"
       justifyContent="center"
-      alignItems="center">
+      alignItems="center"
+    >
       <div
         style={{
           height: "150px",
           overflow: "hidden",
           opacity: hidden ? 1 : 0,
           transition: "opacity 0.3s ease-in-out",
-        }}>
+        }}
+      >
         <Alert
           sx={{
             m: 2,
             width: "350px",
             backgroundColor: `${theme.palette.error.background}`,
           }}
-          severity="error">
+          severity="error"
+        >
           <AlertTitle>Error</AlertTitle>
           {error}
         </Alert>
@@ -87,7 +97,8 @@ function Signup() {
       <Typography
         align="center"
         variant="h3"
-        sx={{ mt: 5, color: `${theme.palette.text.main}` }}>
+        sx={{ mt: 5, color: `${theme.palette.text.main}` }}
+      >
         Signup
       </Typography>
 
@@ -100,12 +111,14 @@ function Signup() {
       <Typography
         align="center"
         variant="subtitle1"
-        sx={{ mt: 1, color: `${theme.palette.text.secondary}` }}>
+        sx={{ mt: 1, color: `${theme.palette.text.secondary}` }}
+      >
         Already a user?{" "}
         <Link
           href="/login"
           underline="hover"
-          color={`${theme.palette.text.main}`}>
+          color={`${theme.palette.text.main}`}
+        >
           Login
         </Link>
       </Typography>

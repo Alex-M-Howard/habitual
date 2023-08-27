@@ -42,8 +42,8 @@ export default async function handler(req, res) {
     case "DELETE":
       // TODO - Add validation
       req.body.userId = parseInt(req.query.userId);
-    response = await User.removeLoggedUserHabit(req.body);
-    return res.status(200).json(response);
+      response = await User.removeLoggedUserHabit(req.body);
+      return res.status(200).json(response);
 
     default:
       return res.status(405).json({ error: "Method not allowed" });

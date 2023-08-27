@@ -1,59 +1,59 @@
-import React, { useEffect,useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import Graph from "@/components/Graph";
-import { useTheme, Grid, Box, CircularProgress} from "@mui/material";
+import { useTheme, Grid, Box, CircularProgress } from "@mui/material";
 import TimeFrameSelector from "@/components/TimeFrameSelector";
 
 function Insights() {
   const { user, token } = useSelector((store) => store.user.loggedIn);
   const [userStats, setUserStats] = useState(null);
   const theme = useTheme();
-  const [selectedTimeFrame, setSelectedTimeFrame] = useState('mostCompletedHabits30');
+  const [selectedTimeFrame, setSelectedTimeFrame] = useState(
+    "mostCompletedHabits30"
+  );
   const colors = [
-    '#fb5a5a',
-    '#fc6d4b',
-    '#f8803e',
-    '#f29333',
-    '#e8a52e',
-    '#dcb631',
-    '#cdc63d',
-    '#bcd550',
-    '#a9e467',
-    '#92f183',
+    "#fb5a5a",
+    "#fc6d4b",
+    "#f8803e",
+    "#f29333",
+    "#e8a52e",
+    "#dcb631",
+    "#cdc63d",
+    "#bcd550",
+    "#a9e467",
+    "#92f183",
   ];
 
   const mapDataToColors = (data, colors) => {
     return data.map((_, index) => colors[index % colors.length]);
   };
 
-   const handleChange = (newValue) => {
-     setSelectedTimeFrame(newValue);
-   };
+  const handleChange = (newValue) => {
+    setSelectedTimeFrame(newValue);
+  };
 
   useEffect(() => {
     async function fetchUserStats() {
       const url = `/api/data/${user.id}`;
-      const headers = { "Authorization": `Bearer ${token}` };
+      const headers = { Authorization: `Bearer ${token}` };
       const response = await axios.get(url, { headers });
       setUserStats(response.data);
     }
 
-      if (!user) return;
-      fetchUserStats();
-  }, [user])
+    if (!user) return;
+    fetchUserStats();
+  }, [user]);
 
   // TODO - Add streaks
 
-
   const renderMostCompletedHabits = () => {
     try {
-      const labels = userStats[selectedTimeFrame].map(habit => habit.name);
-      const data = userStats[selectedTimeFrame].map(habit => habit.count);
+      const labels = userStats[selectedTimeFrame].map((habit) => habit.name);
+      const data = userStats[selectedTimeFrame].map((habit) => habit.count);
 
       const minData = Math.max(Math.min(...data) - 25, 0);
       const maxData = Math.max(...data) + 25;
-
 
       const newData = {
         labels,
@@ -62,7 +62,7 @@ function Insights() {
             label: "Days Completed",
             data: data,
             backgroundColor: mapDataToColors(data, colors.reverse()),
-            borderColor: mapDataToColors(data, colors.reverse())
+            borderColor: mapDataToColors(data, colors.reverse()),
           },
         ],
       };
@@ -85,25 +85,23 @@ function Insights() {
         },
       };
 
-      
-
       return (
         <Box width="100%" maxWidth="100vw">
           <Graph data={newData} options={options} graphType={"bar"} />
         </Box>
       );
     } catch (error) {
-      console.log(error)
+      console.log(error);
       return null;
     }
-  }
-  
+  };
+
   const renderHabitsCompletedByDay = () => {
     if (!userStats) return <div>Loading...</div>;
     try {
       const labels = userStats.habitsCompletedByDay.map((day) => day.name);
       const data = userStats.habitsCompletedByDay.map((day) => day.count);
-      
+
       const maxData = Math.max(...data) + 25;
 
       const newData = {
@@ -117,7 +115,7 @@ function Insights() {
           },
         ],
       };
-      
+
       const options = {
         scales: {
           y: {
@@ -141,13 +139,12 @@ function Insights() {
           <Graph data={newData} options={options} graphType={"bar"} />
         </Box>
       );
-
     } catch (error) {
       console.log(error);
       return null;
     }
-  }
-  
+  };
+
   const renderCategoriesMostCompleted = () => {
     if (!userStats) return <div>Loading...</div>;
     try {
@@ -205,7 +202,8 @@ function Insights() {
         container
         justifyContent="center"
         alignItems="center"
-        sx={{ height: "50vh" }}>
+        sx={{ height: "50vh" }}
+      >
         <CircularProgress color="text" size="75px" />
       </Grid>
     );
@@ -218,7 +216,8 @@ function Insights() {
       justifyContent="space-evenly"
       alignItems="center"
       spacing={2}
-      sx={{ mt: 3, minHeight: "100vh" }}>
+      sx={{ mt: 3, minHeight: "100vh" }}
+    >
       <Grid item xs={12} md={10}>
         <TimeFrameSelector
           selectedTimeFrame={selectedTimeFrame}

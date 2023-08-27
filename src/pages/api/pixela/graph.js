@@ -1,7 +1,7 @@
 export default async function handler(req, res) {
   switch (req.method) {
     case "GET":
-      return res.status(200).json({message: "Get graph SVG and definitions"});
+      return res.status(200).json({ message: "Get graph SVG and definitions" });
 
     case "POST":
       return res.status(200).json({ message: "Create new pixela graph" });

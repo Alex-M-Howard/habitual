@@ -63,6 +63,4 @@ describe("HabitList component", () => {
     const switch2 = screen.getByLabelText("Habit 2");
     expect(switch2).not.toBeChecked();
   });
-
-
 });
