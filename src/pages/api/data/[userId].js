@@ -1,6 +1,8 @@
 import { authenticateJWT, ensureLoggedIn } from "@/middleware/auth";
 import Data from "@/models/data";
 
+const intervals = [30, 60, 90, 180, 365];
+
 export default async function handler(req, res) {
   let token, user, response, validator;
 
@@ -19,27 +21,16 @@ export default async function handler(req, res) {
     case "GET":
       const user = {}
       try {
-        const mostCompletedHabits = await Data.getMostCompletedHabit(req.query);
-        const mostCompletedHabits30 = await Data.getMostCompletedHabitLast30(
-          req.query
-        );
-        const mostCompletedHabits60 = await Data.getMostCompletedHabitLast60(req.query);
-        const mostCompletedHabits90 = await Data.getMostCompletedHabitLast90(req.query);
-        const mostCompletedHabits180 = await Data.getMostCompletedHabitLast180(req.query);
-        const mostCompletedHabits365 = await Data.getMostCompletedHabitLast365(req.query);
-        const habitsCompletedByDay = await Data.getHabitsCompletedByDay(req.query);
-        const habitCategoryMostCompleted = await Data.getHabitCategoryMostCompleted(req.query);
-        const streaks = await Data.getUserStreaks(req.query);
 
-        user.mostCompletedHabits = mostCompletedHabits;
-        user.mostCompletedHabits30 = mostCompletedHabits30;
-        user.mostCompletedHabits60 = mostCompletedHabits60;
-        user.mostCompletedHabits90 = mostCompletedHabits90;
-        user.mostCompletedHabits180 = mostCompletedHabits180;
-        user.mostCompletedHabits365 = mostCompletedHabits365;
-        user.habitsCompletedByDay = habitsCompletedByDay;
-        user.habitCategoryMostCompleted = habitCategoryMostCompleted;
-        user.streaks = streaks;
+        user.mostCompletedHabits = await Data.getMostCompletedHabit(req.query);
+        user.habitsCompletedByDay = await Data.getHabitsCompletedByDay(req.query);
+        user.habitCategoryMostCompleted = await Data.getHabitCategoryMostCompleted(req.query);
+        user.streaks = await Data.getUserStreaks(req.query);
+
+        // Get most completed habits by interval
+        for (let i = 0; i < intervals.length; i++) {
+          user[`mostCompletedHabits${intervals[i]}`] = await Data.getMostCompletedHabits(req.query, intervals[i]);
+        }
 
         return res.status(200).json(user);
       } catch (error) {
