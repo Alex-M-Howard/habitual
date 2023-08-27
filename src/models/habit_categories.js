@@ -1,3 +1,10 @@
+/*
+  HabitCategories model
+  - findAll() => { habitCategories }
+  - add({ habitId, categoryId }) => { habitCategories }
+  - remove({ habitId, categoryId }) => { response }
+*/
+
 "use strict";
 
 const { db } = require("@/config/db");
@@ -80,11 +87,19 @@ class HabitCategories {
    */
 
   static async remove({ habitId, categoryId }) {
+    const existingHabitCategory = await db.query(
+      `SELECT * FROM habit_categories WHERE habit_id = $1 AND category_id = $2`,
+      [habitId, categoryId]
+    );
+    if (existingHabitCategory.rows.length < 1)
+      return {
+        error: "Habit/Category combo doesn't exist. No operations completed.",
+      };
 
-    const existingHabitCategory = await db.query(`SELECT * FROM habit_categories WHERE habit_id = $1 AND category_id = $2`, [habitId, categoryId]);
-    if (existingHabitCategory.rows.length < 1) return { error: "Habit/Category combo doesn't exist. No operations completed." };
-
-    if(existingHabitCategory.rows[0].do_not_delete) return { error: "Habit/Category has permanent status. No operation completed." };
+    if (existingHabitCategory.rows[0].do_not_delete)
+      return {
+        error: "Habit/Category has permanent status. No operation completed.",
+      };
 
     const result = await db.query(
       `
@@ -96,8 +111,9 @@ class HabitCategories {
       [habitId, categoryId]
     );
 
-
-    return { response: `Habit ID: ${habitId}/Category ID: ${categoryId} successfully deleted.` };
+    return {
+      response: `Habit ID: ${habitId}/Category ID: ${categoryId} successfully deleted.`,
+    };
   }
 }
 module.exports = HabitCategories;

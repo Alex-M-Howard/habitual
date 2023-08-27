@@ -1,3 +1,11 @@
+/* 
+Journals model
+- getJournals({ userId }) => { journals }
+- add({ userId, date, entry }) => { journals }
+- remove({ id }) => { response }
+- update({ journalId, userId, entry }) => { response }
+*/
+
 "use strict";
 
 const { db } = require("@/config/db");
@@ -75,6 +83,14 @@ class Journals {
     return { response: `Journal: ID-${id} successfully deleted.` };
   }
 
+  /** Update journal from DB. This has to check if it is allowed to be updated
+   * Also has to check if other users are using journal (In case of duplicate adds)
+   * @param {name} Adds a new journal
+   * @returns {journals: {id, date, entry}}
+   * @returns {error: "Journal not found. No operation completed."}
+   * @returns {response: `Journal: ID-${id} successfully updated.`}
+   *
+   **/
   static async update({ journalId, userId, entry }) {
     const existingJournal = await db.query(
       `SELECT

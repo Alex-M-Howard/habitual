@@ -1,3 +1,11 @@
+/*
+  * Habits model
+  * - findAll() => { habits }
+  * - add({ name }) => { habit }   
+  * - remove({ habitId }) => { response }
+    
+  */
+
 "use strict";
 
 const { db } = require("@/config/db");

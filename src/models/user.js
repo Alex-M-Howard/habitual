@@ -1,3 +1,20 @@
+/*
+ User model
+  - authenticate({ email, password }) => { user }
+  - register({ email, password, firstName, lastName }) => { user }
+  - get(userId) => { user }
+  - update(data) => { user }
+  - remove(email) => { response }
+  - getUserHabits(userId) => { habits }
+  - addUserHabit({ userId, habitId, frequency }) => { userHabit }
+  - removeUserHabit({ userId, habitId }) => { response }
+  - getUserLog(userId) => { log }
+  - getUserLogToday(userId) => { log }
+  - logUserHabit({ userId, habitId, date }) => { response }
+  - removeLoggedUserHabit({ logId }) => { response }
+  - cleanData() => { response } ** Meant to clean guest data to prevent bad actors from messing with the demo
+ */
+
 "use strict";
 
 const { db, BCRYPT_WORK_FACTOR } = require("../config/db");

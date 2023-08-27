@@ -1,6 +1,11 @@
+/*
+ * Pixela API
+ * Not in use in project. Originally was planned but scrapped for time.
+ */
+
 "use strict";
 
-const API = process.env.PIXELA_API
+const API = process.env.PIXELA_API;
 
 const {
   NotFoundError,
@@ -8,22 +13,17 @@ const {
   UnauthorizedError,
 } = require("../helpers/apiError");
 
-
-
 /** Related functions for use with Pixela API. */
 
 class Pixela {
   /**
-   * 
+   *
    * User token needs saved in DB
    * Check if user exists on Pixela
    * If updating password, update in both places
-   * 
+   *
    * Use of this API should be when registering for the site at beginning, otherwise a regular login will make these routes available
    */
-
-
-
 
   /** Register user with data.
    *
@@ -32,7 +32,7 @@ class Pixela {
    * Throws BadRequestError on duplicates.
    **/
 
-  static async createUser({ username, token}) {
+  static async createUser({ username, token }) {
     const duplicateCheck = await db.query(
       `SELECT username
            FROM users
@@ -63,7 +63,6 @@ class Pixela {
 
     return user;
   }
-
-  }
+}
 
 module.exports = User;
