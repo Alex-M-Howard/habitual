@@ -1,15 +1,21 @@
+/*
+Categories model:
+  - findAll() => { categories }
+  - add({ name }) => { category }
+  - remove({ id }) => { response }
+*/
+
 "use strict";
 
 const { db } = require("@/config/db");
 
 /** Related functions for categories. */
-
 class Categories {
-  /** Find all categories.
+  /**
+   * Find all categories.
    *
-   * Returns {categories: [{ id, name }, ...]}
-   **/
-
+   * @returns {Object} - An object containing an array of categories, where each category has an id and name.
+   */
   static async findAll() {
     const result = await db.query(
       `SELECT 
@@ -23,21 +29,21 @@ class Categories {
     return { categories: result.rows };
   }
 
-
   /**
-   * 
-   * @param {name} Adds a new category
-   * @returns {categories: {id, name}}
+   * Adds a new category to the database.
+   *
+   * @param {string} name - The name of the category to be added.
+   * @returns {Object} - An object containing the newly added category's id and name.
    */
   static async add({ name }) {
+    // Check if category already exists
     const existingCategory = await db.query(
       `SELECT * FROM categories WHERE name = $1`,
       [name]
     );
 
     if (existingCategory.rows.length > 0) {
-      // A categorie with this name already exists in the database
-      return { error: 'Category already exists.' };
+      return { error: "Category already exists." };
     }
 
     const result = await db.query(
@@ -51,11 +57,14 @@ class Categories {
     return { categories: result.rows[0] };
   }
 
-  /** Delete category from DB. This has to check if it is allowed to be deleted
-   * Also has to check if habits are using category (In case of duplicate adds)
+  /**
+   * Deletes a category from the database.
+   *
+   * @param {number} id - The id of the category to be removed.
+   * @returns {Object} - An object indicating the status of the delete operation.
    */
-
-  static async remove({id}) {
+  static async remove({ id }) {
+    // Check if category exists. If not, return error.
     const existingCategories = await db.query(
       `SELECT
           id,
@@ -69,10 +78,14 @@ class Categories {
       return { error: "Category not found. No operation completed." };
     }
 
+    // Default categories cannot be deleted
     if (existingCategories.rows[0].doNotDelete) {
-      return { error: "Category has permanent status. No operation completed." };
+      return {
+        error: "Category has permanent status. No operation completed.",
+      };
     }
 
+    // Check if category is still in use by a habit. If so, return error.
     const habitCategories = await db.query(
       `SELECT
           habit_id AS "habitId",
@@ -83,9 +96,10 @@ class Categories {
     );
 
     if (habitCategories.rows.length > 0) {
-      return { error: "Category still in use by habit. No operation completed." };
+      return {
+        error: "Category still in use by habit. No operation completed.",
+      };
     }
-
 
     let result = await db.query(
       `DELETE
@@ -97,10 +111,11 @@ class Categories {
     const categories = result.rows[0];
 
     if (!categories) {
-      return {error: `Category ID: ${id} not found. Delete unsuccessful`}
+      return { error: `Category ID: ${id} not found. Delete unsuccessful` };
     }
 
-    return { response: `Categories ID: ${id} successfully deleted.` };
+    return { response: `Category ID: ${id} successfully deleted.` };
   }
 }
+
 module.exports = Categories;
